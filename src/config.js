@@ -1,8 +1,17 @@
 export const filterFn = Array.prototype.every;
 
-export const collection = []; // this is the data source
+export const subjectsCollection = []; // this is the data source
 
-// todo: config for filterable items
+export const filterableCriteria = [
+    {
+        title: 'Condition',
+        attribute: 'condition'
+    },
+    {
+        title: 'Year',
+        attribute: 'year'
+    }
+];
 
 export const searchKeys = []; // keys keyword searching works on
 
@@ -12,3 +21,9 @@ export const searchKeys = []; // keys keyword searching works on
  * a threshold of 1.0 would match anything.
  **/
 const searchThreshold = .2;
+
+
+//sort
+export const filterableCriteriaSortOptions = {
+    year: items => [...items].sort()
+};

@@ -10,5 +10,8 @@ const finalStore = applyMiddleware(...middlewares)(createStore);
 
 // todo: read initial state from url hash
 
-export default finalStore(rootReducer);
+
+export default finalStore(rootReducer, {
+
+});
 

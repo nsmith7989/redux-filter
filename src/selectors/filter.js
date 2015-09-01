@@ -1,4 +1,4 @@
-import { filterFn, collection } from '../config.js';
+import { filterFn } from '../config.js';
 import { createSelector } from 'reselect';
 import keywordFilter from '../helpers/keywordFilter.js'
 
@@ -20,8 +20,8 @@ function filter(appliedFilters, collection, functions) {
 
 }
 
-const composedSelector = (appliedFilters, keyword, functions) => {
-    const filteredResults = filter(appliedFilters, collection, functions);
+const composedSelector = (appliedFilters, keyword, subjectsCollection, functions) => {
+    const filteredResults = filter(appliedFilters, subjectsCollection, functions);
     const keywordFiltered = keywordFilter(filteredResults, keyword);
     // other filters or sorts go here
     return keywordFiltered;
@@ -30,8 +30,9 @@ const composedSelector = (appliedFilters, keyword, functions) => {
 const appliedFiltersSelector = state => state.appliedFilters;
 const keywordSelector = state => state.searchKeyword;
 const functions = state => state.filterFns;
+const subjectsCollection = state => state.subjectsCollection;
 
 export default createSelector(
-    [appliedFiltersSelector, keywordSelector, functions],
+    [appliedFiltersSelector, keywordSelector, subjectsCollection, functions],
     composedSelector
 );

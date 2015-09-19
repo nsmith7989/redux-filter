@@ -2,4 +2,4 @@
 
 Higher order component for filtering collection. 
 
-WIP full documenation coming soon. 
+WIP full documentation coming soon. 

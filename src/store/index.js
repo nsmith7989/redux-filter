@@ -3,15 +3,19 @@ import thunk from 'redux-thunk';
 import logger from '../middleware/logger.js';
 import hasher from '../middleware/hasher.js';
 import rootReducer from '../reducers/root.js';
+import { buildOptionsList } from '../helpers/buildOptions';
 
-const middlewares = [thunk, logger, hasher];
+export default function buildStore(subjectsCollection, config) {
 
-const finalStore = applyMiddleware(...middlewares)(createStore);
+    const middlewares = [thunk, hasher];
+    const finalStore = applyMiddleware(...middlewares)(createStore);
 
-// todo: read initial state from url hash
-
-
-export default finalStore(rootReducer, {
-
-});
-
+    const { filterFns, optionGroups } = buildOptionsList(
+        subjectsCollection, config.filterableCriteria, config.filterableCriteriaSortOptions
+    );
+    return finalStore(rootReducer, {
+        subjectsCollection,
+        filterFns,
+        optionGroups
+    });
+}

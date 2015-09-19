@@ -1,6 +1,6 @@
-import { filterableCriteria, filterableCriteriaSortOptions } from '../config.js';
-
 const filterFns = {};
+
+let filterableCriteria, filterableCriteriaSortOptions;
 
 function saveFn(attribute, key, fn) {
     filterFns[attribute + '__' + key ] = fn
@@ -10,13 +10,27 @@ function uniqueGeneric(configValue, items) {
     const {title, attribute} = configValue;
     let options = {};
 
-    for(let i = 0, len = items.length; i < len; i++) {
-        let attr = items[i][attribute];
-        if (!attr) continue; //skip undefined
+    // we do different things based on whether its a multiple or not
+    let itemInMultiple = false;
+
+    const addOption = attr => {
         if (!options[attr]) {
             options[attr] = 0;
         }
         options[attr]++;
+    };
+
+    for(let i = 0, len = items.length; i < len; i++) {
+        let attr = items[i][attribute];
+
+        if (!attr) continue; //skip undefined
+
+        if (attr instanceof Array) { // deal with array
+            attr.forEach(addOption);
+            itemInMultiple = true;
+        } else {
+            addOption(attr);
+        }
     }
 
     let keys = Object.keys(options);
@@ -28,8 +42,13 @@ function uniqueGeneric(configValue, items) {
 
     let valuesKey = keys.map(key => {
 
-        const fn = item => item[attribute] === key;
-        saveFn(attribute, key, fn);
+        if (!itemInMultiple) {
+            const fn = item => item[attribute] === key;
+            saveFn(attribute, key, fn);
+        } else {
+            const fn = item => item[attribute].indexOf(key) > -1;
+            saveFn(attribute, key, fn);
+        }
 
         return {
             value: key,
@@ -95,11 +114,13 @@ function uniqueRanges(configValue, items) {
     };
 }
 
-export function getUniqueValues(configValue, items) {
+function getUniqueValues(configValue, items) {
     return configValue.ranges ? uniqueRanges(configValue, items) : uniqueGeneric(configValue, items);
 }
 
-export function buildOptionsList(items) {
+export function buildOptionsList(items, criteria, sortOptions) {
+    filterableCriteria = criteria;
+    filterableCriteriaSortOptions = sortOptions;
     let optionGroups = [];
     // loop over all items, get unique options from config
     for(let i = 0, len = filterableCriteria.length; i < len; i++) {

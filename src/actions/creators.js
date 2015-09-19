@@ -1,10 +1,10 @@
 import { TOGGLE_FILTER, KEYWORD_SEARCH } from '../constants.js';
 
 
-export function toggleFilter(filter) {
+export function toggleFilter(attribute, value) {
     return {
         type: TOGGLE_FILTER,
-        filter
+        filter: { attribute, value }
     }
 }
 

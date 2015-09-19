@@ -5,7 +5,7 @@
  * @param state
  */
 function hashURLFromState(state) {
-
+    // todo implement state hashing of appplied filters
 }
 
 const urlhash = store => next => action => {

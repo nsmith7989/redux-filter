@@ -4,6 +4,7 @@ import createStoreFromSubjects from './store/index.js';
 import * as actions from './actions/creators.js';
 import filterFactory from './selectors/filter.js'
 
+
 function buildSelector(searchKeys, searchThreshold) {
     // build filter selector
     const filter = filterFactory(searchKeys, searchThreshold);
@@ -27,7 +28,6 @@ class Filter extends Component {
             subjects = [],
             filterableCriteria = [],
             filterableCriteriaSortOptions = {},
-            filterFn = Array.prototype.every,
             searchThreshold = .2,
             searchKeys = []
             } = props;

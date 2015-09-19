@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { TOGGLE_FILTER, KEYWORD_SEARCH } from '../constants.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, CLEAR_FILTERS } from '../constants.js';
 import toggle from '../helpers/toggle.js'
 
 function appliedFilters(state = {}, action = null) {
@@ -8,6 +8,8 @@ function appliedFilters(state = {}, action = null) {
         case TOGGLE_FILTER:
             const { attribute: key, value } = action.filter;
             return toggle(state, key, value);
+        case CLEAR_FILTERS:
+            return {};
         default:
             return state;
     }

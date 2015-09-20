@@ -109,8 +109,10 @@ const config = {
                 }
             ]
         }
-
-    ]
+    ],
+    filterableCriteriaSortOptions: {
+        type: (items) => [...items].sort()
+    }
 };
 
 

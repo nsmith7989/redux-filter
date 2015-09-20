@@ -46,4 +46,25 @@ Wrap filter App in `<Filter>`, passing in config options as props to `<Filter>`.
         document.getElementById('team-filter-root')
     );
     
-Examples coming soon. 
+`<Filters />` will inject the following `props` into the child component:
+
+### Results
+- `collection` `{Array.<Object>}`. The sorted/filtered list of subjects after filters have been applied.  
+ 
+- `keyword` `{string}`. The currently applied search keyword
+
+- `optionGroups` `{Array.<Object>}`. Unique values of the attributes from subjects taken from the `filterableCriteria` option.
+
+### Actions
+verticle
+- `clearFilters` `{function(filterAttribute{string}):void}`. Clear all filters of a given type. 
+
+- `keywordSearch` `{function(string):void}`. Search the collection by keyword. 
+
+- `toggleFilter` `{function(filterAttribute, filterValue):void}` Toggle a filter by attribute and value.
+If a filter of that attribute is not applied it will be added. If a filter of that attribute was applied it will be removed.
+
+- `toggleOnly` `{function(filterAttribute, filterValue):void}` Remove all other filters of this attribute, except the one applied.
+Useful in select box or radio button scenarios. 
+
+## `<Filter />` props

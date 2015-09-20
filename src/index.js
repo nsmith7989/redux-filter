@@ -74,7 +74,8 @@ class Filter extends Component {
             dispatch,
             collection,
             optionGroups,
-            keyword } = allProps;
+            keyword,
+            appliedFilters } = allProps;
 
         const boundActions = this.actions;
 
@@ -82,7 +83,8 @@ class Filter extends Component {
             ...boundActions,
             collection,
             optionGroups,
-            keyword
+            keyword,
+            appliedFilters
         });
 
     }

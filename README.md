@@ -1,6 +1,7 @@
 # Redux Filter
 
-Higher order component for filtering collection. 
+Higher Order React Component for filtering (and sorting) a collection of items. This is especially useful in product filters that
+ mimic the sorting/filtering behavior of Amazon or Best Buy.  
 
 ## Usage
 
@@ -56,7 +57,7 @@ Wrap filter App in `<Filter>`, passing in config options as props to `<Filter>`.
 - `optionGroups` `{Array.<Object>}`. Unique values of the attributes from subjects taken from the `filterableCriteria` option.
 
 ### Actions
-verticle
+
 - `clearFilters` `{function(filterAttribute{string}):void}`. Clear all filters of a given type. 
 
 - `keywordSearch` `{function(string):void}`. Search the collection by keyword. 
@@ -68,3 +69,8 @@ If a filter of that attribute is not applied it will be added. If a filter of th
 Useful in select box or radio button scenarios. 
 
 ## `<Filter />` props
+
+## Todo
+
+- [ ] Sorting
+- [ ] Paging

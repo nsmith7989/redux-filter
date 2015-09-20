@@ -1,4 +1,4 @@
-import { TOGGLE_FILTER, KEYWORD_SEARCH, CLEAR_FILTERS } from '../constants.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS } from '../constants.js';
 
 
 export function toggleFilter(attribute, value) {
@@ -8,9 +8,17 @@ export function toggleFilter(attribute, value) {
     }
 }
 
-export function clearFilters() {
+export function toggleOnly(attribute, value) {
     return {
-        type: CLEAR_FILTERS
+        type: TOGGLE_FILTER_ONLY,
+        filter: { attribute, value }
+    }
+}
+
+export function clearFilters(attribute) {
+    return {
+        type: CLEAR_FILTERS,
+        filter: { attribute }
     }
 }
 

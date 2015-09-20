@@ -31,3 +31,14 @@ export default function toggle(filters, key, value) {
     }
 
 }
+
+export function toggleOnly(filters, key, value) {
+    filters = {...filters};
+    return {...filters, [key]: [value]}
+}
+
+export function clearFilter(filters, key) {
+    filters = {...filters};
+    delete filters[key];
+    return {...filters};
+}

@@ -23,6 +23,21 @@ class Filters extends Component {
 
     }
 
+    sortItems() {
+        const { sortItems, applySort } = this.props;
+        const handleSortChange = (e) => {
+            if (!e.target.value) return;
+            const idx = e.target.value;
+            applySort(sortItems[idx]);
+        };
+        return <select onChange={(e) => handleSortChange(e)} >
+            <option value="" disabled>Sort Functions</option>
+            {sortItems.map((item, idx) => {
+                return <option key={idx} value={idx}>{item.title}</option>
+            })}
+        </select>
+    }
+
     render() {
         const { optionGroups } = this.props;
         const items = optionGroups.map((group, idx) => {
@@ -33,6 +48,8 @@ class Filters extends Component {
             </div>
         });
         return <div className="filters">
+            <h2>Sorts</h2>
+            {this.sortItems()}
             <h2>Filters</h2>
             {items}
         </div>
@@ -112,7 +129,21 @@ const config = {
     ],
     filterableCriteriaSortOptions: {
         type: (items) => [...items].sort()
-    }
+    },
+    sortItems: [
+        {
+            title: 'Price - Lowest to Highest',
+            fn: (items) => {
+                return [...items].sort((a, b) => a.price - b.price)
+            }
+        },
+        {
+            title: 'Price - Highest to Lowers',
+            fn: (items) => {
+                return [...items].sort((a, b) => b.price - a.price)
+            }
+        }
+    ]
 };
 
 

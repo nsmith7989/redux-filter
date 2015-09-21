@@ -5,9 +5,9 @@ import * as actions from './actions/creators.js';
 import filterFactory from './selectors/filter.js'
 
 
-function buildSelector(searchKeys, searchThreshold) {
+function buildSelector(searchKeys, searchThreshold, sortItems) {
     // build filter selector
-    const filter = filterFactory(searchKeys, searchThreshold);
+    const filter = filterFactory(searchKeys, searchThreshold, sortItems);
     return function(state) {
         return {
             collection: filter(state),
@@ -29,7 +29,8 @@ class Filter extends Component {
             filterableCriteria = [],
             filterableCriteriaSortOptions = {},
             searchThreshold = .2,
-            searchKeys = []
+            searchKeys = [],
+            sortItems = []
             } = props;
 
         // instantiate here
@@ -44,7 +45,7 @@ class Filter extends Component {
         }, {});
 
         // build selector based on props
-        this.select = buildSelector(searchKeys, searchThreshold);
+        this.select = buildSelector(searchKeys, searchThreshold, sortItems);
 
         // compute first state
         this.state = this.select(this.store.getState());
@@ -75,6 +76,7 @@ class Filter extends Component {
             collection,
             optionGroups,
             keyword,
+            sortItems,
             appliedFilters } = allProps;
 
         const boundActions = this.actions;
@@ -84,7 +86,8 @@ class Filter extends Component {
             collection,
             optionGroups,
             keyword,
-            appliedFilters
+            appliedFilters,
+            sortItems
         });
 
     }

@@ -37,10 +37,10 @@ export default function(searchKeys, searchThreshold) {
 
     }
 
-    const composedSelector = (appliedFilters, keyword, subjectsCollection, functions) => {
+    const composedSelector = (appliedFilters, keyword, subjectsCollection, functions, sortFn) => {
         const filteredResults = filter(appliedFilters, subjectsCollection, functions);
-        return keywordFilter(filteredResults, keyword);
-        // other filters or sorts go here
+        const keywordFiltered = keywordFilter(filteredResults, keyword);
+        return sortFn.fn(keywordFiltered);
 
     };
 
@@ -48,11 +48,12 @@ export default function(searchKeys, searchThreshold) {
     const keywordSelector = state => state.keywordSearch;
     const functions = state => state.filterFns;
     const subjectsCollection = state => state.subjectsCollection;
+    const sortFn = state => state.sortFn;
 
 
 
     return createSelector(
-        [appliedFiltersSelector, keywordSelector, subjectsCollection, functions],
+        [appliedFiltersSelector, keywordSelector, subjectsCollection, functions, sortFn],
         composedSelector
     )
 }

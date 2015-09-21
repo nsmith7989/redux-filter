@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS } from '../constants.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT } from '../constants.js';
 import toggle, {toggleOnly, clearFilter} from '../helpers/toggle.js'
 
 function appliedFilters(state = {}, action = null) {
@@ -37,6 +37,14 @@ function optionGroups(state = {}, action = {}) {
     return state;
 }
 
+function sortFn(state = {fn: (items) => items}, action = {}) {
+    switch (action.type) {
+        case APPLY_SORT:
+            return action.func;
+        default:
+            return state;
+    }
+}
 
 export default combineReducers({
     appliedFilters,
@@ -44,4 +52,5 @@ export default combineReducers({
     subjectsCollection,
     filterFns,
     optionGroups,
+    sortFn
 })

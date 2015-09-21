@@ -119,7 +119,7 @@ Attributes on subjects that you want to filter. Each object in this array will b
 on `subjects` and inject as `optionGroups` into your component. See the example under `optionGroups` for example of output
  
 ### `filterableCriteriaSortOptions` `{Object.<string, function>}`
-Default `{}`
+Default: `{}`
 
 Object of callback functions used to order `optionGroups` 
 
@@ -128,6 +128,12 @@ To order the sweater `type`, for example:
     filterableCriteriaSortOptions: {
         type: (items) => [...items].sort()
     }
+    
+### `sortItems` `{Array.<Object>}`
+Default: `[]`
+
+Sort functions to be applied to subjects *after* filtered. Usually this is 'Sort by Price - Lowest to Highest' or 
+similar.
     
 ### `searchThreshold` `{number} 0 - 1`
  Default: `.2`

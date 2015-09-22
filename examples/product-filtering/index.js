@@ -39,7 +39,7 @@ class Filters extends Component {
     }
 
     render() {
-        const { optionGroups } = this.props;
+        const { optionGroups, clearAllFilters } = this.props;
         const items = optionGroups.map((group, idx) => {
             const { title, values } = group;
             return <div key={idx}>
@@ -52,6 +52,8 @@ class Filters extends Component {
             {this.sortItems()}
             <h2>Filters</h2>
             {items}
+            <h2>Clears</h2>
+            <button onClick={() => clearAllFilters() }>Clear All Filters</button>
         </div>
     }
 }

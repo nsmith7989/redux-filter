@@ -1,4 +1,4 @@
-import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT } from '../constants.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS } from '../constants.js';
 
 
 export function toggleFilter(attribute, value) {
@@ -33,5 +33,11 @@ export function applySort(func) {
     return {
         type: APPLY_SORT,
         func
+    }
+}
+
+export function clearAllFilters() {
+    return {
+        type: CLEAR_ALL_FILTERS
     }
 }

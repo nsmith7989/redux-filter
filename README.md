@@ -151,5 +151,4 @@ Attributes on each subject that are searched with the keyword search.
 
 ## Todo
 
-- [ ] Sorting
 - [ ] Paging

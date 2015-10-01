@@ -47,6 +47,11 @@ class Filter extends Component {
         // build selector based on props
         this.select = buildSelector(searchKeys, searchThreshold, sortItems);
 
+        // if there is a sort function, apply it
+        if (sortItems.length && (typeof sortItems[0].fn === 'function')) {
+            this.actions.applySort(sortItems[0]);
+        }
+
         // compute first state
         this.state = this.select(this.store.getState());
 

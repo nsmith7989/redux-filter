@@ -133,7 +133,7 @@ To order the sweater `type`, for example:
 Default: `[]`
 
 Sort functions to be applied to subjects *after* filtered. Usually this is 'Sort by Price - Lowest to Highest' or 
-similar.
+similar. The first object will be applied as the initial sort function. 
     
 ### `searchThreshold` `{number} 0 - 1`
  Default: `.2`
@@ -151,5 +151,4 @@ Attributes on each subject that are searched with the keyword search.
 
 ## Todo
 
-- [ ] Sorting
 - [ ] Paging

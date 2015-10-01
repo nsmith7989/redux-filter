@@ -89,6 +89,15 @@ class App extends Component {
 
 }
 
+const logger = store => next => action => {
+    console.group(action.type);
+    console.info('dispatching', action);
+    const result = next(action);
+    console.log('next state', store.getState());
+    console.groupEnd(action.type);
+    return result;
+};
+
 const config = {
     subjects: sweaters,
     filterableCriteria: [
@@ -145,6 +154,9 @@ const config = {
                 return [...items].sort((a, b) => b.price - a.price)
             }
         }
+    ],
+    middleware: [
+        logger
     ]
 };
 

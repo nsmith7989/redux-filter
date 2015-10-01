@@ -30,13 +30,14 @@ class Filter extends Component {
             filterableCriteriaSortOptions = {},
             searchThreshold = .2,
             searchKeys = [],
-            sortItems = []
+            sortItems = [],
+            middleware = []
             } = props;
 
         // instantiate here
         this.store = createStoreFromSubjects(subjects, {
             filterableCriteria, filterableCriteriaSortOptions
-        });
+        }, middleware);
 
         // bind action creators to the store
         this.actions = Object.keys(actions).reduce((prev, actionKey) => {

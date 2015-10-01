@@ -13,12 +13,12 @@ function buildSelector(searchKeys, searchThreshold, sortItems) {
             collection: filter(state),
             appliedFilters: state.appliedFilters,
             keyword: state.keywordSearch,
-            optionGroups: state.optionGroups
+            optionGroups: state.optionGroups,
+            sortFn: state.sortFn
         }
     }
 }
 
-// bind action creators to the store
 
 class Filter extends Component {
 
@@ -72,14 +72,15 @@ class Filter extends Component {
 
         const {
             children,
-            dispatch,
             collection,
             optionGroups,
             keyword,
             sortItems,
-            appliedFilters } = allProps;
+            appliedFilters,
+            sortFn } = allProps;
 
         const boundActions = this.actions;
+
 
         return cloneElement(children, {
             ...boundActions,
@@ -87,9 +88,9 @@ class Filter extends Component {
             optionGroups,
             keyword,
             appliedFilters,
-            sortItems
+            sortItems,
+            sortFn
         });
-
     }
 
 }

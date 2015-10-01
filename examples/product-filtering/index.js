@@ -1,4 +1,5 @@
 import React, { Component, render } from 'react';
+import qs from 'qs';
 import Filter from 'redux-filter';
 import sweaters from './data.js';
 
@@ -98,6 +99,37 @@ const logger = store => next => action => {
     return result;
 };
 
+const filters = state => {
+    if (!Object.keys(state.appliedFilters).length) return '';
+    return qs.stringify({
+        appliedFilters: state.appliedFilters
+    });
+};
+
+function hashURLFromState(state) {
+    window.location.hash = `#!/?${filters(state)}`;
+}
+
+const getStateFromHash = () => {
+    const filterString = window.location.hash.replace('#!/?', '');
+    return qs.parse(filterString)
+};
+
+const urlhash = store => next => action => {
+
+    // call next action
+    const nextResult = next(action);
+
+    // build url out of current state
+    const state = store.getState();
+
+    hashURLFromState(state);
+
+    return nextResult;
+};
+
+
+
 const config = {
     subjects: sweaters,
     filterableCriteria: [
@@ -139,7 +171,8 @@ const config = {
         }
     ],
     filterableCriteriaSortOptions: {
-        type: (items) => [...items].sort()
+        type: (items) => [...items].sort(),
+        color: (items) => [...items].sort()
     },
     sortItems: [
         {
@@ -156,8 +189,9 @@ const config = {
         }
     ],
     middleware: [
-        logger
-    ]
+        logger, urlhash
+    ],
+    initialState: getStateFromHash()
 };
 
 

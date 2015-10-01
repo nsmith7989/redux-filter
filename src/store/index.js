@@ -5,9 +5,9 @@ import hasher from '../middleware/hasher.js';
 import rootReducer from '../reducers/root.js';
 import { buildOptionsList } from '../helpers/buildOptions';
 
-export default function buildStore(subjectsCollection, config) {
+export default function buildStore(subjectsCollection, config, middleware) {
 
-    const middlewares = [thunk, hasher];
+    const middlewares = [thunk, hasher, ...middleware];
     const finalStore = applyMiddleware(...middlewares)(createStore);
 
     const { filterFns, optionGroups } = buildOptionsList(

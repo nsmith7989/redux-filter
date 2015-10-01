@@ -5,8 +5,19 @@
  * @param state
  */
 function hashURLFromState(state) {
-    // todo implement state hashing of appplied filters
+    // todo implement state hashing of applied filters
 }
+
+const filters = state => {
+    if (!state.appliedFilters.size) return '';
+    return state.appliedFilters.reduce((acc, set, attribute) => {
+        for(let val of set.values()) {
+            acc.push('filter=' + encodeURIComponent(attribute) + '__' + encodeURIComponent(val));
+        }
+        return acc;
+    }, []).join('&');
+
+};
 
 const urlhash = store => next => action => {
 

@@ -144,10 +144,14 @@ similar. The first object will be applied as the initial sort function.
  a threshold of 1.0 would match anything.
  
 ### `searchKeys` `{Array.<string>}`
-
 Default: `[]`
 
 Attributes on each subject that are searched with the keyword search.
+
+### `middleware` `{Array.<function>}`
+Default: `[]`
+
+Functions that will serve as arbitrary [Redux Middleware](http://rackt.github.io/redux/docs/advanced/Middleware.html). 
 
 ## Todo
 

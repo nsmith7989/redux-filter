@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import rootReducer from '../reducers/root.js';
 import { buildOptionsList } from '../helpers/buildOptions';
 
-export default function buildStore(subjectsCollection, config, middleware) {
+export default function buildStore(subjectsCollection, config, middleware, initialState) {
 
     const middlewares = [thunk, ...middleware];
     const finalStore = applyMiddleware(...middlewares)(createStore);
@@ -12,6 +12,7 @@ export default function buildStore(subjectsCollection, config, middleware) {
         subjectsCollection, config.filterableCriteria, config.filterableCriteriaSortOptions
     );
     return finalStore(rootReducer, {
+        ...initialState,
         subjectsCollection,
         filterFns,
         optionGroups

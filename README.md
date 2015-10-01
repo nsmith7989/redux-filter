@@ -151,7 +151,13 @@ Attributes on each subject that are searched with the keyword search.
 ### `middleware` `{Array.<function>}`
 Default: `[]`
 
-Functions that will serve as arbitrary [Redux Middleware](http://rackt.github.io/redux/docs/advanced/Middleware.html). 
+Functions that will serve as arbitrary [Redux Middleware](http://rackt.github.io/redux/docs/advanced/Middleware.html).
+ 
+### `initialState` `{Object}`
+Default: `{}`
+
+Start the filter with some initial state. Usually this will be restoring state that was serialized and stored from middleware.
+See the examples folder for a demonstration on restoring state from a url hash. 
 
 ## Todo
 

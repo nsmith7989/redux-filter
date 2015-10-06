@@ -1,21 +1,41 @@
 {
-  "ecmaFeatures": {
-    "jsx": true,
-    "modules": true
-  },
-  "env": {
-    "browser": true,
-    "node": true
-  },
   "parser": "babel-eslint",
   "rules": {
-    "quotes": [2, "single"],
-    "strict": [2, "never"],
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2,
-    "react/react-in-jsx-scope": 2
+    "indent": [
+      2,
+      4
+    ],
+    "quotes": [
+      2,
+      "single"
+    ],
+    "linebreak-style": [
+      2,
+      "unix"
+    ],
+    "semi": [
+      2,
+      "always"
+    ]
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jquery": true
+  },
+  "extends": "eslint:recommended",
+  "ecmaFeatures": {
+    "jsx": true,
+    "experimentalObjectRestSpread": true,
+    "modules": true,
+    "mocha": true
   },
   "plugins": [
     "react"
-  ]
+  ],
+  "globals": {
+    "React": true,
+    "describe": true,
+    "it": true
+  }
 }

@@ -25,7 +25,7 @@ export default function toggle(filters, key, value) {
         currentFilterArray.push(value);
     }
     if (!currentFilterArray.length) {
-        return {...filters}
+        return {...filters};
     } else {
         return {...filters, [key]: currentFilterArray};
     }
@@ -34,7 +34,7 @@ export default function toggle(filters, key, value) {
 
 export function toggleOnly(filters, key, value) {
     filters = {...filters};
-    return {...filters, [key]: [value]}
+    return {...filters, [key]: [value]};
 }
 
 export function clearFilter(filters, key) {

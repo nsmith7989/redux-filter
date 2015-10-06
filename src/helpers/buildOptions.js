@@ -3,7 +3,7 @@ const filterFns = {};
 let filterableCriteria, filterableCriteriaSortOptions;
 
 function saveFn(attribute, key, fn) {
-    filterFns[attribute + '__' + key ] = fn
+    filterFns[attribute + '__' + key ] = fn;
 }
 
 function uniqueGeneric(configValue, items) {
@@ -54,7 +54,7 @@ function uniqueGeneric(configValue, items) {
             value: key,
             count: options[key],
             attribute
-        }
+        };
     });
 
     return {
@@ -66,7 +66,7 @@ function uniqueGeneric(configValue, items) {
 function buildRangeFn(min, max, attribute) {
     return function(item) {
         return item[attribute] >= min && item[attribute] <= max;
-    }
+    };
 }
 
 function uniqueRanges(configValue, items) {
@@ -105,7 +105,7 @@ function uniqueRanges(configValue, items) {
             value: key,
             count: options[key].count,
             attribute
-        }
+        };
     });
 
     return {
@@ -124,11 +124,11 @@ export function buildOptionsList(items, criteria, sortOptions) {
     let optionGroups = [];
     // loop over all items, get unique options from config
     for(let i = 0, len = filterableCriteria.length; i < len; i++) {
-        optionGroups.push(getUniqueValues(filterableCriteria[i], items))
+        optionGroups.push(getUniqueValues(filterableCriteria[i], items));
     }
 
     return {
         optionGroups,
         filterFns
-    }
+    };
 }

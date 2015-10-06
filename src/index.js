@@ -1,8 +1,7 @@
-import React, { cloneElement, Component } from 'react';
-import { bindActionCreators } from 'redux';
+import { cloneElement, Component } from 'react';
 import createStoreFromSubjects from './store/index.js';
 import * as actions from './actions/creators.js';
-import filterFactory from './selectors/filter.js'
+import filterFactory from './selectors/filter.js';
 
 
 function buildSelector(searchKeys, searchThreshold, sortItems) {
@@ -15,10 +14,9 @@ function buildSelector(searchKeys, searchThreshold, sortItems) {
             keyword: state.keywordSearch,
             optionGroups: state.optionGroups,
             sortFn: state.sortFn
-        }
-    }
+        };
+    };
 }
-
 
 class Filter extends Component {
 

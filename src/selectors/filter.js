@@ -1,5 +1,4 @@
-let filterFn = Array.prototype.every;
-import Fuse from 'fuse.js'
+import Fuse from 'fuse.js';
 import { createSelector } from 'reselect';
 
 export default function(searchKeys, searchThreshold) {
@@ -55,5 +54,5 @@ export default function(searchKeys, searchThreshold) {
     return createSelector(
         [appliedFiltersSelector, keywordSelector, subjectsCollection, functions, sortFn],
         composedSelector
-    )
+    );
 }

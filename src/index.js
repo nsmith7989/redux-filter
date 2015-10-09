@@ -1,4 +1,4 @@
-import { cloneElement, Component, Children, isValidElement } from 'react';
+import { cloneElement, Component, Children } from 'react';
 import createStoreFromSubjects from './store/index.js';
 import * as actions from './actions/creators.js';
 import filterFactory from './selectors/filter.js';

@@ -21,7 +21,7 @@ class Filters extends Component {
             return <div key={idx} style={style} onClick={() => toggleFilter(attribute, value)}>
                 {item.value}
             </div>;
-        })
+        });
 
     }
 

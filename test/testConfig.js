@@ -3,7 +3,10 @@ export default {
         title: 'Type',
         attribute: 'type'
     }],
-    subjects: [{title: 'foo'}, {title: 'bar'}],
+    subjects: [
+        {title: 'foo', type: 'foo'},
+        {title: 'bar', type: 'bar'}
+    ],
     sortItems: [
         {
             title: 'Sort Type',
@@ -11,6 +14,5 @@ export default {
                 return [...items].sort((a, b) => a.type - b.type);
             }
         }
-    ],
-
+    ]
 }

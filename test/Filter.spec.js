@@ -5,12 +5,14 @@ import jsdom from 'mocha-jsdom';
 import Filter from '../src/index.js';
 import testConfig from './testConfig.js';
 
+
+
 expect.extend({
     toBeDefined() {
         expect.assert(
-            this.actual !== undefined,
-            'expected %s to be defined',
-            this.actual
+          this.actual !== undefined,
+          'expected %s to be defined',
+          this.actual
         );
     }
 });
@@ -18,17 +20,19 @@ expect.extend({
 expect.extend({
     toBeAFunction() {
         expect.assert(
-            (typeof this.actual === 'function'),
-            'expected %s to be a function',
-            this.actual
+          (typeof this.actual === 'function'),
+          'expected %s to be a function',
+          this.actual
         );
     }
 });
+
 
 describe('Filter Component', () => {
     jsdom();
 
     class Child extends Component {
+
         render() {
             return <div>Test</div>;
         }
@@ -44,6 +48,16 @@ describe('Filter Component', () => {
         expect(spy.calls.length).toBe(0);
         return tree;
     };
+
+    const makeChild = () => {
+        const tree = TestUtils.renderIntoDocument(
+          <Filter {...testConfig}>
+              <Child />
+          </Filter>
+        );
+        return TestUtils.findRenderedComponentWithType(tree, Child);
+    };
+
 
     it('should enforce a single child', () => {
 
@@ -109,6 +123,80 @@ describe('Filter Component', () => {
         });
     });
 
+    describe('should filter single item correctly', () => {
 
+        const singleActions = [
+            {action: 'toggleFilter', args: ['type', 'foo'], subjects: [{title: 'foo', type: 'foo'}]},
+            {action: 'toggleFilter', args: ['type', 'bar'], subjects: [{title: 'bar', type: 'bar'}]},
+            {action: 'clearAllFilters', args: [], subjects: [{title: 'foo', type: 'foo'}, {title: 'bar', type: 'bar'}]}
+        ];
+
+        singleActions.forEach(test => {
+            it(`should return correct subjects when ${test.action} is called with ${test.args}`, () => {
+                const child = makeChild();
+                // call action
+                child.props[test.action].apply(child, test.args);
+                expect(child.props.collection).toEqual(test.subjects);
+            });
+        });
+
+    });
+
+    describe('should filter correctly with multiple actions', () => {
+
+        const sequences = [
+            [
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'bar'],
+                    result: [{title: 'bar', type: 'bar'}]
+                },
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'bar'],
+                    result: [{title: 'foo', type: 'foo'}, {title: 'bar', type: 'bar'}]
+                }
+            ],
+            [
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'bar'],
+                    result: [{title: 'bar', type: 'bar'}]
+                },
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'bar'],
+                    result: [{title: 'foo', type: 'foo'}, {title: 'bar', type: 'bar'}]
+                },
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'bar'],
+                    result: [{title: 'bar', type: 'bar'}]
+                },
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'foo'],
+                    result: [{title: 'foo', type: 'foo'}, {title: 'bar', type: 'bar'}]
+                }
+            ]
+        ];
+
+        sequences.forEach(seq => {
+            describe(`should have the correct subjects after each`, () => {
+                let child;
+                seq.forEach((obj, index) => {
+                    it(`should have the correct subjects after ${obj.fn}`, () => {
+                        if (index === 0) {
+                            child = makeChild();
+                        }
+                        child.props[obj.fn].apply(child, obj.args);
+                        expect(child.props.collection).toEqual(obj.result);
+                    });
+                });
+            });
+        });
+
+
+    });
 
 });

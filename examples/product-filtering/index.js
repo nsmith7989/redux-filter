@@ -178,13 +178,13 @@ const config = {
         {
             title: 'Price - Lowest to Highest',
             fn: (items) => {
-                return [...items].sort((a, b) => a.price - b.price)
+                return [...items].sort((a, b) => a.price - b.price);
             }
         },
         {
             title: 'Price - Highest to Lowers',
             fn: (items) => {
-                return [...items].sort((a, b) => b.price - a.price)
+                return [...items].sort((a, b) => b.price - a.price);
             }
         }
     ],

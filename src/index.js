@@ -1,8 +1,11 @@
-import { cloneElement, Component } from 'react';
+import { cloneElement, Component, Children, isValidElement } from 'react';
 import createStoreFromSubjects from './store/index.js';
 import * as actions from './actions/creators.js';
 import filterFactory from './selectors/filter.js';
 
+const isDom = instance => {
+    return typeof instance.type !== 'function';
+};
 
 function buildSelector(searchKeys, searchThreshold, sortItems) {
     // build filter selector
@@ -86,6 +89,12 @@ class Filter extends Component {
 
         const boundActions = this.actions;
 
+        // can only have one child
+        Children.only(children);
+        // enforce that child component must be a react element
+        if (isDom(children)) {
+            throw new Error('child must be a react component, not a dom element');
+        }
 
         return cloneElement(children, {
             ...boundActions,

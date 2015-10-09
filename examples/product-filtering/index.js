@@ -1,4 +1,5 @@
-import React, { Component, render } from 'react';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
 import qs from 'qs';
 import Filter from 'redux-filter';
 import sweaters from './data.js';

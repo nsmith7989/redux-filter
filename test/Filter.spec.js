@@ -1,11 +1,9 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 import expect, { spyOn } from 'expect';
 import jsdom from 'mocha-jsdom';
 import Filter from '../src/index.js';
 import testConfig from './testConfig.js';
-
-
 
 expect.extend({
     toBeDefined() {
@@ -90,7 +88,7 @@ describe('Filter Component', () => {
         )).toThrow(/child must be a react component, not a dom element/);
     });
 
-    describe('should inject objects as props into child', () => {
+    describe('Inject Object Props', () => {
 
         const testProps = ['collection',
             'optionGroups',
@@ -108,7 +106,7 @@ describe('Filter Component', () => {
 
     });
 
-    describe('should inject functions as props into child', () => {
+    describe('Inject function props', () => {
         const testFunctions = ['toggleFilter',
             'toggleOnly',
             'clearFilters',
@@ -123,7 +121,7 @@ describe('Filter Component', () => {
         });
     });
 
-    describe('should filter single item correctly', () => {
+    describe('Single Actions', () => {
 
         const singleActions = [
             {action: 'toggleFilter', args: ['type', 'foo'], subjects: [{title: 'foo', type: 'foo'}]},
@@ -142,7 +140,7 @@ describe('Filter Component', () => {
 
     });
 
-    describe('should filter correctly with multiple actions', () => {
+    describe('Multiple Actions', () => {
 
         const sequences = [
             [
@@ -178,6 +176,18 @@ describe('Filter Component', () => {
                     args: ['type', 'foo'],
                     result: [{title: 'foo', type: 'foo'}, {title: 'bar', type: 'bar'}]
                 }
+            ],
+            [
+                {
+                    fn: 'toggleFilter',
+                    args: ['type', 'bar'],
+                    result: [{title: 'bar', type: 'bar'}]
+                },
+                {
+                    fn: 'clearFilters',
+                    args: ['type', 'bar'],
+                    result: [{title: 'foo', type: 'foo'}, {title: 'bar', type: 'bar'}]
+                }
             ]
         ];
 
@@ -195,8 +205,31 @@ describe('Filter Component', () => {
                 });
             });
         });
+    });
 
-
+    describe('Searching', () => {
+      // const searchKeys = ['foo', 'bar', 'gibberish'];
+        const searchKeys = [
+            {
+                searchTerm: 'foo',
+                result: [{title: 'foo', type: 'foo'}]
+            },
+            {
+                searchTerm: 'bar',
+                result: [{title: 'bar', type: 'bar'}]
+            },
+            {
+                searchTerm: 'gibberish',
+                result: []
+            }
+        ];
+        searchKeys.forEach(keyObject => {
+            it(`filter with ${keyObject.searchTerm}`, () => {
+                const child = makeChild();
+                child.props.keywordSearch(keyObject.searchTerm);
+                expect(child.props.collection).toEqual(keyObject.result);
+            });
+        });
     });
 
 });

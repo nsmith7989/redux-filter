@@ -16,12 +16,17 @@
     "semi": [
       2,
       "always"
-    ]
+    ],
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/react-in-jsx-scope": 2,
   },
   "env": {
     "es6": true,
     "browser": true,
-    "jquery": true
+    "jquery": true,
+    "mocha": true,
+    "node": true
   },
   "extends": "eslint:recommended",
   "ecmaFeatures": {
@@ -32,10 +37,5 @@
   },
   "plugins": [
     "react"
-  ],
-  "globals": {
-    "React": true,
-    "describe": true,
-    "it": true
-  }
+  ]
 }

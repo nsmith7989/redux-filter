@@ -14,5 +14,6 @@ export default {
                 return [...items].sort((a, b) => a.type - b.type);
             }
         }
-    ]
-}
+    ],
+    searchKeys: ['title']
+};

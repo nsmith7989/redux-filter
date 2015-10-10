@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "babel src --out-dir lib --watch",
     "test": "mocha --compilers js:babel/register",
-    "lint": "eslint src --fix",
+    "lint": "eslint src test --fix",
     "build:lib": "babel src --out-dir lib",
     "build:umd": "webpack src/index.js dist/redux-filter.js --config webpack.dist.config.js",
     "build": "npm run build:lib && npm run build:umd",

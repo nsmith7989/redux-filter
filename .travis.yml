@@ -1,6 +1,14 @@
 language: node_js
 node_js:
-  - "node"
+- node
 script:
-  - npm run lint
-  - npm test
+- npm run lint
+- npm test
+deploy:
+  provider: npm
+  email: nathanael.b.smith@gmail.com
+  api_key:
+    secure: PjykCEsSTB1yxCje+RxtcpTqRAKAiqx/KHU8DcAplfiILkbGONSDKmif/gLRn4kWY4ucDFSuI/N6+0t3UWSY3+GLQNsHV2GHW+Xv/fGt90bI/u7C4CYC/zw1X4nwnKSYrbDpzvBf4DXMX1UlLSgZA9Ur0qDPsi/H0vPE6ArzKl1b9k4+OWdViVAS3/M8Y8KLKd4JpekW7VrzF7Hx5kEFsAMgOQgt8xVtUZBE/V0YVSxY6XeNbfTSFmalzTBAeWV1HnrklcBgCkoZMDmD2QPsNJMOFRaXjTkEJgfjhUWLzGa2LmWP3GmHGARll5eWB0+psY3C98lfs5oOHdFDUHTrGRzg/4foVUUk7lyFUQH8b2I/RD1ziyWDTCZCpB8VNmU3JtBySel1zLBqjuVcNHDMErKKOurGkfs7j7T1qpio7zHGo2XRMZA6FvxasCpYLLfiYBPtcdAYp+6/hRDa7vRqD2Tv4s7ptJor5/IajZX7UAlxvkw8BmC95UePLXOjLIdTEAoULsIXTnuAf5qWo1rRBDiZY9ssY+q71drXYGuJakxPkzeckwvzV+ayMClvK5KiIjQ0JkxYvG04ttyF0lKASvw369dUEXZdM/jqwlkS4p3MzuNYMhYd8V9PnB8idMi4GJeQTrzCbgmYhHmmqQ7YcytYHzOhTUzkFSWvLCWmrB8=
+  on:
+    tags: true
+    repo: nsmith7989/redux-filter

@@ -35,9 +35,9 @@ class Filters extends Component {
         return <select onChange={(e) => handleSortChange(e)} >
             <option value="" disabled>Sort Functions</option>
             {sortItems.map((item, idx) => {
-                return <option key={idx} value={idx}>{item.title}</option>
+                return <option key={idx} value={idx}>{item.title}</option>;
             })}
-        </select>
+        </select>;
     }
 
     render() {
@@ -47,7 +47,7 @@ class Filters extends Component {
             return <div key={idx}>
                 <header>{title}</header>
                 {this.renderOptionGroup((values))}
-            </div>
+            </div>;
         });
         return <div className="filters">
             <h2>Sorts</h2>
@@ -56,7 +56,7 @@ class Filters extends Component {
             {items}
             <h2>Clears</h2>
             <button onClick={() => clearAllFilters() }>Clear All Filters</button>
-        </div>
+        </div>;
     }
 }
 
@@ -69,7 +69,7 @@ class Product extends Component {
             {attributes.map((attr, idx) => (
                 <p key={idx}>{attr.toUpperCase()}: {this.props[attr]}</p>
             ))}
-        </div>
+        </div>;
     }
 }
 

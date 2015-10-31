@@ -100,52 +100,33 @@ export function uniqueRanges(configValue, items, sortFn = null) {
         // find which range i falls in
         const foundRange = find(ranges, rangeObj => {
             const {min, max} = rangeObj.range;
-            return within(min, max, currentValue)
+            return within(min, max, currentValue);
         });
+
+        const { min, max } = foundRange.range;
+        // build range fn
+        saveFn(attribute, foundRange.displayValue, buildRangeFn(min, max, attribute));
+
         accumulate(prev, foundRange.displayValue);
         return prev;
     });
 
-    console.log(options);
-
-    // loop over all ranges
-    for(let i = 0, len = ranges.length; i < len; i++) {
-        const { min, max } = ranges[i].range;
-        const displayVal = ranges[i].displayValue;
-
-        //loop over all items and find any with attribute within that range (inclusive)
-        for(let j = 0, jlen = items.length; j < jlen; j++) {
-
-            let attr = +items[j][attribute];
-            // check if within range
-            if (attr >= min && attr <= max) {
-                if (!options[displayVal]) {
-                    options[displayVal] = {
-                        fn: buildRangeFn(min, max, attribute),
-                        count: 0
-                    };
-                }
-                options[displayVal].count++;
-            }
-        }
+    let keys = Object.keys(options);
+    if(typeof sortFn === 'function') {
+        keys = sortFn(keys);
     }
-
-    let values = Object.keys(options).map(key => {
-
-        // save reference to this function for later
-        saveFn(attribute, key, options[key].fn);
-
-        return {
-            value: key,
-            count: options[key].count,
-            attribute
-        };
-    });
 
     return {
         title,
-        values
+        values: keys.map(key => {
+            return {
+                count: options[key],
+                attribute,
+                value: key
+            };
+        })
     };
+
 }
 
 function getUniqueValues(configValue, items, sortFn) {

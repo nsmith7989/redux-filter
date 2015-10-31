@@ -178,27 +178,27 @@ function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function subjects() {
-    // two of 0-50
-    const acc = [];
-    for (let i = 0; i < 2; i++) {
-        acc.push({
-            price: getRandomArbitrary(0, 49.99)
-        });
-    }
-    // four of 50-99
-    for (let i = 0; i < 4; i++) {
-        acc.push({
-            price: getRandomArbitrary(50, 99.99)
-        });
-    }
-
-    return acc;
-}
-
 describe('uniqueRanges', () => {
 
     it('filters uniqueRanges', () => {
+
+        function subjects() {
+            // two of 0-50
+            const acc = [];
+            for (let i = 0; i < 2; i++) {
+                acc.push({
+                    price: getRandomArbitrary(0, 49.99)
+                });
+            }
+            // four of 50-99
+            for (let i = 0; i < 4; i++) {
+                acc.push({
+                    price: getRandomArbitrary(50, 99.99)
+                });
+            }
+
+            return acc;
+        }
 
         const criteria = {
             title: 'Retail Price',
@@ -231,6 +231,108 @@ describe('uniqueRanges', () => {
                     attribute: 'price',
                     count: 4,
                     value: '$50.00 - $99.99'
+                }
+            ]
+        };
+
+        const actual = uniqueRanges(criteria, subjects());
+
+        expect(actual).toEqual(expected);
+
+    });
+
+    it('processes ranges for heirachial values', () => {
+
+        function subjects() {
+            // two of 0-50
+            const acc = [];
+            for (let i = 0; i < 2; i++) {
+                acc.push({
+                    price: getRandomArbitrary(0, 49.99),
+                    salePrice: getRandomArbitrary(0, 19.99)
+                });
+            }
+            // four of 50-99
+            for (let i = 0; i < 4; i++) {
+                acc.push({
+                    price: getRandomArbitrary(50, 99.99),
+                    salePrice: getRandomArbitrary(20, 49.00)
+                });
+            }
+
+            return acc;
+        }
+
+        const criteria = {
+            title: 'Retail Price',
+            attribute: 'price',
+            ranges: [
+                {
+                    displayValue: 'Up - $49.99',
+                    range: {
+                        min: 0,
+                        max: 49.99
+                    }
+
+                }, {
+                    displayValue: '$50.00 - $99.99',
+                    range: {
+                        min: 50.00,
+                        max: 99.99
+                    }
+
+                }
+            ],
+            children: [
+                {
+                    title: 'Sale Price',
+                    attribute: 'salePrice',
+                    ranges: [
+                        {
+                            displayValue: 'Sale Price Up to $19.99',
+                            range: {
+                                min: 0,
+                                max: 19.99
+                            }
+                        }, {
+                            displayValue: 'Sale Price $20.00 to $49.99',
+                            range: {
+                                min: 20,
+                                max: 49.99
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const expected = {
+            title: 'Retail Price',
+            values: [
+                {
+                    attribute: 'price',
+                    count: 2,
+                    value: 'Up - $49.99'
+                }, {
+                    attribute: 'price',
+                    count: 4,
+                    value: '$50.00 - $99.99'
+                }
+            ],
+            children: [
+                {
+                    title: 'Sale Price',
+                    values: [
+                        {
+                            attribute: 'salePrice',
+                            count: 2,
+                            value: 'Sale Price Up to $19.99'
+                        }, {
+                            attribute: 'salePrice',
+                            count: 4,
+                            value: 'Sale Price $20.00 to $49.99'
+                        }
+                    ]
                 }
             ]
         };

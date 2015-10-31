@@ -67,7 +67,7 @@ export function uniqueGeneric(configValue, items, keySortFn = null) {
     };
 
     if (children) {
-        result['children'] = children.map(child => uniqueGeneric(child, items));
+        result['children'] = children.map(child => getUniqueValues(child, items));
     }
 
     return result;
@@ -94,7 +94,7 @@ function within(min, max, num) {
 }
 
 export function uniqueRanges(configValue, items, sortFn = null) {
-    const {title, attribute, ranges} = configValue;
+    const {title, attribute, ranges, children} = configValue;
 
     let options = valueMap(attribute, items, (prev, currentValue) => {
         // find which range i falls in
@@ -116,7 +116,7 @@ export function uniqueRanges(configValue, items, sortFn = null) {
         keys = sortFn(keys);
     }
 
-    return {
+    const result = {
         title,
         values: keys.map(key => {
             return {
@@ -126,6 +126,12 @@ export function uniqueRanges(configValue, items, sortFn = null) {
             };
         })
     };
+
+    if(children) {
+        result['children'] = children.map(child => getUniqueValues(child, items, sortFn));
+    }
+
+    return result;
 
 }
 

@@ -3,7 +3,7 @@ const random = (arr) => {
 };
 
 const size = () => {
-    return random(['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large'])
+    return random(['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']);
 };
 
 const color = () => {
@@ -21,7 +21,7 @@ const designer = () => {
         'Vintage Havana',
         'Neiman Marcus Cashmere Collection',
         'Derek Lam 10 Crosby'
-    ])
+    ]);
 };
 
 const type = () => {
@@ -44,6 +44,7 @@ for(let i = 0; i < 300; i++) {
     const currentSize = size();
     const currentType = type();
     const currentDesigner = designer();
+    const currentPrice = price();
 
     data.push({
         title: `${currentDesigner} ${currentType} ${currentColor} ${currentSize}`,
@@ -51,7 +52,8 @@ for(let i = 0; i < 300; i++) {
         size: currentSize,
         designer: currentDesigner,
         type: currentType,
-        price: price()
+        price: currentPrice,
+        salesPrice: currentPrice * .8
     });
 }
 

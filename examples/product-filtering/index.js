@@ -153,6 +153,25 @@ const config = {
         {
             title: 'Retail Price',
             attribute: 'price',
+            children: [
+                {
+                    title: 'Sale Price',
+                    attribute: 'salesPrice',
+                    ranges: [{
+                        displayValue: 'Up to 39.99',
+                        range: {
+                            min: 0,
+                            max: 39.99
+                        }
+                    }, {
+                        displayValue: '$40.00 to $79.99',
+                        range: {
+                            min: 40.00,
+                            max: 79.99
+                        }
+                    }]
+                }
+            ],
             ranges: [
                 {
                     displayValue: 'Up - $49.99',

@@ -5,14 +5,7 @@ const config = {
     filterableCriteria: [
         {
             title: 'Type',
-            attribute: 'type',
-            children: [
-                {
-                    title: 'SubType',
-                    attribute: 'subtype',
-                    parent: 'type'
-                }
-            ]
+            attribute: 'type'
         }
     ],
     subjects: [

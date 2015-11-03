@@ -91,7 +91,8 @@ describe('build heirachy', () => {
 
 function product(attribute, topLevelCategory, subCategory) {
     return {
-        title: 'Product', categoryHeirarchy: {
+        title: 'Product',
+        categoryHeirarchy: {
             categoryAttribute: {
                 title: attribute
             },

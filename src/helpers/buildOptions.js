@@ -1,5 +1,4 @@
-import matches from 'lodash.matches';
-
+import flattenRecursive from './flattenRecursive.js';
 
 const filterFns = {};
 
@@ -126,108 +125,18 @@ export function uniqueRanges(configValue, items, sortFn = null) {
 
 }
 
-export function uniqueObject(configValue, items, sortFn = null) {
-    const { attribute, title } = configValue;
+export function uniqueObject(configValue, items, sortFn) {
 
-    const flatResults = {};
-
-    items.forEach(item => {
-        const attrObj = item[attribute];
-        const keys = Object.keys(attrObj);
-        keys.forEach(k => {
-            // add to flat results if not there already
-            if (!flatResults[k]) {
-                flatResults[k] = {
-                    count: 0,
-                    values: []
-                };
-            }
-            // icrement the count
-            flatResults[k].count++;
-            // if it has a parent save that info too
-            if (attrObj[k].parent) {
-                flatResults[k].parent = attrObj[k].parent;
-            }
-
-            // also save values (uniquely)
-            if (!objectInArray(flatResults[k].values, attrObj[k])) {
-                flatResults[k].values.push(attrObj[k]);
-            } else {
-            }
-
-        });
-    });
+    const { attribute, title, id } = configValue;
 
     return {
         title,
-        values: createHeirachy(flatResults)
+        values: flattenRecursive(attribute, items, id)
     };
 
 }
 
-function print(obj) {
-    console.log(JSON.stringify(obj, null, ' '));
-    return obj;
-}
 
-function objectInArray(arr, obj) {
-    return arr.some(o => matches(o, obj));
-}
-
-function buildTree(parentKey, all) {
-    const acc = [];
-    if (all[parentKey]) {
-        for (let i = 0, len = all[parentKey].length; i < len; i++) {
-            const item = all[parentKey][i];
-            const children = buildTree(item.key, all);
-            const obj = {
-                title: item.values[0].title,
-                count: item.count,
-                attribute: item.key,
-                values: item.values
-            };
-            if (children.length) {
-                obj.children = children;
-            }
-            acc.push(obj);
-        }
-    }
-    return acc;
-}
-
-export function createHeirachy(obj) {
-
-    // turn insideout
-    const itemsByParent = Object.keys(obj).reduce((prev, key) => {
-        const item = obj[key];
-        item.key = key;
-        if (item.parent) {
-            if (!prev[item.parent]) {
-                prev[item.parent] = [];
-            }
-            prev[item.parent].push(item);
-        }
-        return prev;
-    }, {});
-
-    // find top level parents
-    const topKeys = Object.keys(obj).filter(key => {
-        const item = obj[key];
-        return !item.parent;
-    });
-
-    return topKeys.map(key => {
-        const item = obj[key];
-        return {
-            title: item.values[0].title,
-            attribute: key,
-            values: item.values,
-            count: item.count,
-            children: buildTree(key, itemsByParent)
-        };
-    });
-
-}
 function getUniqueValues(configValue, items, sortFn) {
     if (configValue.ranges) {
         return uniqueRanges(configValue, items, sortFn);
@@ -235,6 +144,7 @@ function getUniqueValues(configValue, items, sortFn) {
     if (configValue.hierarchy) {
         return uniqueObject(configValue, items, sortFn);
     }
+
     return uniqueGeneric(configValue, items, sortFn);
 }
 

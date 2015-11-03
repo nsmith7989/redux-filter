@@ -20,18 +20,14 @@ export default function(searchKeys, searchThreshold) {
     }
 
 
-    function filter(appliedFilters, collection, functions) {
+    function filter(appliedFilters, collection) {
 
         return collection.filter(item => {
 
             if (!Object.keys(appliedFilters).length) return true;
+            // must pass all
+            return appliedFilters.every(fn => fn(item));
 
-            return Object.keys(appliedFilters).every(key => {
-                return appliedFilters[key].some(value => {
-                    const fn = functions[key + '__' + value];
-                    return (typeof fn === 'function') ? fn(item) : false;
-                });
-            });
         });
 
     }

@@ -34,13 +34,13 @@ module.exports = {
 
     module: {
         // Load the react-hot-loader
-        loaders: [ {
+        loaders: [{
             test: /\.jsx?$/,
-            loaders: ['babel'],
+            loaders: ['babel']
         }, {
-                test: /\.json/,
-                loader: 'json'
-            }]
+            test: /\.json/,
+            loader: 'json'
+        }]
     },
 
 };

@@ -9,6 +9,7 @@
   "author": "Nathanael Smith",
   "license": "MIT",
   "dependencies": {
+    "json-loader": "^0.5.3",
     "qs": "^5.1.0",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",

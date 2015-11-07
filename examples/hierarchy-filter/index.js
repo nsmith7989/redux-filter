@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import qs from 'qs';
 import Filter from 'redux-filter';
-import sweaters from './data.js';
+
+import data from './data.json';
 
 const active = (appliedFilters, attribute, value) => {
     return appliedFilters[attribute] && (appliedFilters[attribute].indexOf(value) > -1);
@@ -40,23 +41,35 @@ class Filters extends Component {
         </select>;
     }
 
-    render() {
-        const { optionGroups, clearAllFilters } = this.props;
-        const items = optionGroups.map((group, idx) => {
-            const { title, values } = group;
-            return <div key={idx}>
-                <header>{title}</header>
-                {this.renderOptionGroup((values))}
-            </div>;
-        });
-        return <div className="filters">
-            <h2>Sorts</h2>
-            {this.sortItems()}
-            <h2>Filters</h2>
-            {items}
-            <h2>Clears</h2>
-            <button onClick={() => clearAllFilters() }>Clear All Filters</button>
+    renderRecurse(children) {
+        const { toggleFilter, appliedFilters } = this.props;
+        return <ul>
+            {children.map(child => {
+                const { value, count, attribute } = child;
+                const style = active(appliedFilters, attribute, value) ? {
+                    background: 'yellow'
+                } : {};
+                return <li>
+                    <div style={style} onClick={() => toggleFilter(attribute, value)} >{value} ({count})</div>
+                    {child.children && this.renderRecurse(child.children)}
+                </li>;
+            })}
+        </ul>;
+    }
+
+    renderTopLevel(topObj) {
+        const { value, children } = topObj;
+        return <div>
+            <header>{value}</header>
+            {this.renderRecurse(children)}
         </div>;
+    }
+    render() {
+        const { optionGroups } = this.props;
+        // so there is only one option group
+        const items = optionGroups[0].values.map(item => this.renderTopLevel(item));
+
+        return <div className="filters">{items}</div>;
     }
 }
 
@@ -83,7 +96,7 @@ class App extends Component {
                 {
                     collection.length ?
                     collection.map((product, idx) => <Product key={idx} {...product} />) :
-                    <p>No Sweaters found.</p>
+                    <p>No subjects found.</p>
                 }
             </div>
         </div>;
@@ -132,61 +145,14 @@ const urlhash = store => next => action => {
 
 
 const config = {
-    subjects: sweaters,
+    subjects: data,
     filterableCriteria: [
         {
-            title: 'Sweater Type',
-            attribute: 'type'
-        },
-        {
-            title: 'Color',
-            attribute: 'color'
-        },
-        {
-            title: 'Size',
-            attribute: 'size'
-        },
-        {
-            title: 'Designer',
-            attribute: 'designer'
-        },
-        {
-            title: 'Retail Price',
-            attribute: 'price',
-            ranges: [
-                {
-                    displayValue: 'Up - $49.99',
-                    range: {
-                        min: 0,
-                        max: 49.99
-                    }
-                },
-                {
-                    displayValue: '$50.00 - $99.99',
-                    range: {
-                        min: 50.00,
-                        max: 99.99
-                    }
-                }
-            ]
-        }
-    ],
-    filterableCriteriaSortOptions: {
-        type: (items) => [...items].sort(),
-        color: (items) => [...items].sort()
-    },
-    sortItems: [
-        {
-            title: 'Price - Lowest to Highest',
-            fn: (items) => {
-                return [...items].sort((a, b) => a.price - b.price);
-            }
-        },
-        {
-            title: 'Price - Highest to Lowers',
-            fn: (items) => {
-                return [...items].sort((a, b) => b.price - a.price);
-            }
+            title: 'attributes',
+            attribute: 'filterableCriteria',
+            hierarchy: true,
+            id: 'content_id',
+            attributeDisplayValue: 'title'
         }
     ],
     middleware: [

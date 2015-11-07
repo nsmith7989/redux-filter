@@ -1,0 +1,40 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    margin-left: 1em;
+}
+.product-filter {
+    display: flex;
+}
+
+.filters {
+    padding: 20px;
+}
+.filters header {
+    text-transform: uppercase;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.products {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+}
+.product {
+    width: calc(50% - 10px);
+    display: inline-block;
+    padding: 5px;
+    vertical-align: top;
+    margin: 5px;
+    background: #ccc;
+}
+.product header {
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: bold;
+}

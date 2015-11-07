@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "babel src --out-dir lib --watch",
     "test": "mocha --compilers js:babel/register",
+    "test-watch": "mocha --compilers js:babel/register --watch",
     "lint": "eslint src test --fix",
     "build:lib": "babel src --out-dir lib",
     "build:umd": "webpack src/index.js dist/redux-filter.js --config webpack.dist.config.js",
@@ -46,6 +47,8 @@
   },
   "dependencies": {
     "fuse.js": "^1.2.2",
+    "lodash.find": "^3.2.1",
+    "lodash.matches": "^3.1.0",
     "react": "^0.14.0",
     "redux": "^3.0.0",
     "redux-thunk": "^1.0.0",

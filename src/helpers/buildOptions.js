@@ -1,131 +1,164 @@
+import flattenRecursive, { recurseLevel } from './flattenRecursive.js';
+
 const filterFns = {};
 
-let filterableCriteria, filterableCriteriaSortOptions;
+let filterableCriteria;
 
 function saveFn(attribute, key, fn) {
-    filterFns[attribute + '__' + key ] = fn;
+    filterFns[attribute + '__' + key] = fn;
 }
 
-function uniqueGeneric(configValue, items) {
-    const {title, attribute} = configValue;
-    let options = {};
-
-    // we do different things based on whether its a multiple or not
-    let itemInMultiple = false;
-
-    const addOption = attr => {
-        if (!options[attr]) {
-            options[attr] = 0;
-        }
-        options[attr]++;
-    };
-
-    for(let i = 0, len = items.length; i < len; i++) {
-        let attr = items[i][attribute];
-
-        if (!attr) continue; //skip undefined
-
-        if (attr instanceof Array) { // deal with array
-            attr.forEach(addOption);
-            itemInMultiple = true;
-        } else {
-            addOption(attr);
-        }
+function accumulate(collection, value) {
+    if (!collection[value]) {
+        collection[value] = 0;
     }
+    collection[value]++;
+    return collection;
+}
+
+export function getFrequencyOfUniqueValues(attribute, items) {
+    return valueMap(attribute, items, (prev, currentVal) => {
+        if (currentVal === undefined) return prev;
+
+        if (currentVal instanceof Array) {
+            currentVal.forEach(val => {
+                prev = accumulate(prev, val);
+            });
+        } else {
+            prev = accumulate(prev, currentVal);
+        }
+        return prev;
+    });
+}
+
+function valueMap(attribute, items, fn) {
+    return items.reduce((prev, currentItem) => {
+        return fn(prev, currentItem[attribute]);
+    }, {});
+}
+
+export function uniqueGeneric(configValue, items, keySortFn = null) {
+    const { title, attribute } = configValue;
+    const options = getFrequencyOfUniqueValues(attribute, items);
+    // save functions
+    Object.keys(options).forEach(key => {
+        const fn = item => {
+            if (item[attribute] instanceof Array) {
+                return item[attribute].indexOf(key) > -1;
+            }
+            return item[attribute] === key;
+        };
+        saveFn(attribute, key, fn);
+    });
 
     let keys = Object.keys(options);
-
-    const sortFn = filterableCriteriaSortOptions[attribute];
-    if (typeof sortFn === 'function') {
-        keys = sortFn(keys);
+    // keys might have a sort function
+    if (typeof keySortFn === 'function') {
+        keys = keySortFn(keys);
     }
-
-    let valuesKey = keys.map(key => {
-
-        if (!itemInMultiple) {
-            const fn = item => item[attribute] === key;
-            saveFn(attribute, key, fn);
-        } else {
-            const fn = item => item[attribute].indexOf(key) > -1;
-            saveFn(attribute, key, fn);
-        }
-
-        return {
-            value: key,
-            count: options[key],
-            attribute
-        };
-    });
 
     return {
         title,
-        values: valuesKey
+        values: keys.map(key => {
+            return {
+                value: key,
+                count: options[key],
+                attribute: attribute
+            };
+        })
     };
+
 }
 
 function buildRangeFn(min, max, attribute) {
-    return function(item) {
+    return function (item) {
         return item[attribute] >= min && item[attribute] <= max;
     };
 }
 
-function uniqueRanges(configValue, items) {
-    const {title, attribute, ranges} = configValue;
+function find(arr, fn) {
+    for (let i = 0, len = arr.length; i < len; i++) {
 
-    let options = {};
-
-    // loop over all ranges
-    for(let i = 0, len = ranges.length; i < len; i++) {
-        const {min, max} = ranges[i].range;
-        const displayVal = ranges[i].displayValue;
-
-        //loop over all items and find any with attribute within that range (inclusive)
-        for(let j = 0, jlen = items.length; j < jlen; j++) {
-
-            let attr = +items[j][attribute];
-            // check if within range
-            if (attr >= min && attr <= max) {
-                if (!options[displayVal]) {
-                    options[displayVal] = {
-                        fn: buildRangeFn(min, max, attribute),
-                        count: 0
-                    };
-                }
-                options[displayVal].count++;
-            }
+        if (fn(arr[i])) {
+            return arr[i];
         }
     }
+}
 
-    let values = Object.keys(options).map(key => {
+function within(min, max, num) {
+    return num >= min && num <= max;
+}
 
-        // save reference to this function for later
-        saveFn(attribute, key, options[key].fn);
+export function uniqueRanges(configValue, items, sortFn = null) {
+    const {title, attribute, ranges} = configValue;
 
-        return {
-            value: key,
-            count: options[key].count,
-            attribute
-        };
+    let options = valueMap(attribute, items, (prev, currentValue) => {
+        // find which range i falls in
+        const foundRange = find(ranges, rangeObj => {
+            const {min, max} = rangeObj.range;
+            return within(min, max, currentValue);
+        });
+
+        const { min, max } = foundRange.range;
+        // build range fn
+        saveFn(attribute, foundRange.displayValue, buildRangeFn(min, max, attribute));
+
+        accumulate(prev, foundRange.displayValue);
+        return prev;
     });
+
+    let keys = Object.keys(options);
+    if (typeof sortFn === 'function') {
+        keys = sortFn(keys);
+    }
+
+    return {
+        title,
+        values: keys.map(key => {
+            return {
+                count: options[key],
+                attribute,
+                value: key
+            };
+        })
+    };
+
+}
+
+export function uniqueObject(configValue, items, sortFn) {
+    const { attribute, title, id, attributeDisplayValue = 'title' } = configValue;
+
+    let values = flattenRecursive(attribute, items, id, saveFn, attributeDisplayValue);
+
+    if (typeof sortFn === 'function') {
+        values = recurseLevel(values, 'children', sortFn);
+    }
 
     return {
         title,
         values
     };
+
 }
 
-function getUniqueValues(configValue, items) {
-    return configValue.ranges ? uniqueRanges(configValue, items) : uniqueGeneric(configValue, items);
+
+function getUniqueValues(configValue, items, sortFn) {
+    if (configValue.ranges) {
+        return uniqueRanges(configValue, items, sortFn);
+    }
+    if (configValue.hierarchy) {
+        return uniqueObject(configValue, items, sortFn);
+    }
+
+    return uniqueGeneric(configValue, items, sortFn);
 }
 
 export function buildOptionsList(items, criteria, sortOptions) {
     filterableCriteria = criteria;
-    filterableCriteriaSortOptions = sortOptions;
-    let optionGroups = [];
-    // loop over all items, get unique options from config
-    for(let i = 0, len = filterableCriteria.length; i < len; i++) {
-        optionGroups.push(getUniqueValues(filterableCriteria[i], items));
-    }
+
+    let optionGroups = filterableCriteria.map(criteria => {
+        return getUniqueValues(criteria, items, sortOptions[criteria.type]);
+    });
 
     return {
         optionGroups,

@@ -45,13 +45,12 @@ class Filters extends Component {
         const { toggleFilter, appliedFilters } = this.props;
         return <ul>
             {children.map(child => {
-                const { value, count, filter } = child;
-                const active = appliedFilters.indexOf(filter) > -1;
-                const style = active ? {
+                const { value, count, attribute } = child;
+                const style = active(appliedFilters, attribute, value) ? {
                     background: 'yellow'
                 } : {};
                 return <li>
-                    <div style={style} onClick={() => toggleFilter(filter)} >{value} ({count})</div>
+                    <div style={style} onClick={() => toggleFilter(attribute, value)} >{value} ({count})</div>
                     {child.children && this.renderRecurse(child.children)}
                 </li>;
             })}
@@ -146,13 +145,14 @@ const urlhash = store => next => action => {
 
 
 const config = {
-    subjects: data.concat(data).concat(data),
+    subjects: data,
     filterableCriteria: [
         {
             title: 'attributes',
             attribute: 'filterableCriteria',
             hierarchy: true,
-            id: 'content_id'
+            id: 'content_id',
+            attributeDisplayValue: 'title'
         }
     ],
     middleware: [

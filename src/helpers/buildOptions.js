@@ -1,4 +1,4 @@
-import flattenRecursive from './flattenRecursive.js';
+import flattenRecursive, { recurseLevel } from './flattenRecursive.js';
 
 const filterFns = {};
 
@@ -126,12 +126,17 @@ export function uniqueRanges(configValue, items, sortFn = null) {
 }
 
 export function uniqueObject(configValue, items, sortFn) {
+    const { attribute, title, id, attributeDisplayValue = 'title' } = configValue;
 
-    const { attribute, title, id } = configValue;
+    let values = flattenRecursive(attribute, items, id, saveFn, attributeDisplayValue);
+
+    if (typeof sortFn === 'function') {
+        values = recurseLevel(values, 'children', sortFn);
+    }
 
     return {
         title,
-        values: flattenRecursive(attribute, items, id)
+        values
     };
 
 }

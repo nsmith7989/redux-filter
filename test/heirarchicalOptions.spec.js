@@ -1,185 +1,161 @@
 import expect from 'expect';
-import {uniqueObject, createHeirachy} from '../src/helpers/buildOptions.js';
+import flattenDedup from '../src/helpers/flattenRecursive';
 
-describe('build heirachy', () => {
-    it('builds results based on flat results', () => {
-        const flatResults = {
-            'categoryAttribute': {
-                'count': 4,
-                'values': [
+describe('flatten recursive', () => {
+
+    it('flattens and deduplicates attribute objects', () => {
+        const subjects = [
+            {
+                title: 'Fruit Salad',
+                category: [
                     {
-                        'title': 'Categories'
+                        id: 1,
+                        title: 'Fruit'
+                    },
+                    {
+                        id: 11,
+                        title: 'Salad'
                     }
                 ]
             },
-            'topLevelCategory': {
-                'count': 2,
-                'values': [
-                    {
-                        'title': 'Classic Chilled Salads',
-                        'parent': 'categoryAttribute'
-                    }
-                ],
-                'parent': 'categoryAttribute'
-            },
-            'subCategory': {
-                'count': 2,
-                'values': [
-                    {
-                        'title': 'Potato Salads',
-                        'parent': 'topLevelCategory'
-                    }
-                ],
-                'parent': 'topLevelCategory'
-            }
-        };
-
-        const expected = [
             {
-                title: 'Categories',
-                attribute: 'categoryAttribute',
-                count: 4,
-                values: [
+                title: 'Pasta Salad',
+                category: [
                     {
-                        title: 'Categories'
-                    }
-                ],
-                children: [
+                        id: 2,
+                        title: 'Pasta'
+                    },
                     {
-                        title: 'Classic Chilled Salads',
-                        attribute: 'topLevelCategory',
-                        count: 2,
-                        values: [
-                            {
-                                title: 'Classic Chilled Salads',
-                                parent: 'categoryAttribute'
-                            }
-                        ],
-                        children: [
-                            {
-                                title: 'Potato Salads',
-                                attribute: 'subCategory',
-                                count: 2,
-                                values: [
-                                    {
-                                        title: 'Potato Salads',
-                                        parent: 'topLevelCategory'
-                                    }
-                                ]
-                            }, {
-                                title: 'Cole Slaws',
-                                attribute: 'subcategory',
-                                count: 2,
-                                values: [
-                                    {
-                                        title: 'Cole Slaws',
-                                        parent: 'topLevelCategory'
-                                    }
-                                ]
-                            }
-                        ]
+                        id: 11,
+                        title: 'Salad'
                     }
                 ]
             }
         ];
 
-        const actual = createHeirachy(flatResults);
+        const expected = [
+            {
+                value: 'Fruit',
+                attribute: 1,
+                count: 1,
+                id: 1
+            }, {
+                value: 'Salad',
+                attribute: 11,
+                count: 2,
+                id: 11
+            }, {
+                value: 'Pasta',
+                attribute: 2,
+                count: 1,
+                id: 2
+            }];
+
+        const actual = flattenDedup('category', subjects, 'id', function() {});
+
         expect(actual).toEqual(expected);
 
     });
-});
 
-function product(attribute, topLevelCategory, subCategory) {
-    return {
-        title: 'Product',
-        categoryHeirarchy: {
-            categoryAttribute: {
-                title: attribute
+    it('nested attribute objects', () => {
+        const subjects = [
+            {
+                title: 'Fruit Salad',
+                category: [
+                    {
+                        id: 1,
+                        title: 'Fruit'
+                    },
+                    {
+                        id: 11,
+                        title: 'Salad',
+                        underling: [{
+                            id: 111,
+                            title: 'Really a desert'
+                        }]
+                    }
+                ]
             },
-            topLevelCategory: {
-                title: topLevelCategory,
-                parent: 'categoryAttribute'
-            },
-            subCategory: {
-                title: subCategory,
-                parent: 'topLevelCategory'
+            {
+                title: 'Pasta Salad',
+                category: [
+                    {
+                        id: 2,
+                        title: 'Pasta'
+                    },
+                    {
+                        id: 11,
+                        title: 'Salad'
+                    }
+                ]
             }
-        }
-    };
-}
+        ];
 
-describe('heirical options generation', () => {
-    it('generates hierahical options based on subjects', () => {
+        const expected = [
+            {
+                value: 'Fruit',
+                attribute: 1,
+                count: 1,
+                id: 1
+            }, {
+                value: 'Salad',
+                attribute: 11,
+                count: 2,
+                id: 11,
+                underling: [{
+                    id: 111,
+                    value: 'Really a desert',
+                    count: 1,
+                    attribute: '11-111'
+                }]
+            }, {
+                value: 'Pasta',
+                attribute: 2,
+                count: 1,
+                id: 2
+            }];
 
-        const subjects = [];
-        for (let i = 0; i < 2; i++) {
-            subjects.push(product('Categories', 'Classic Chilled Salads', 'Potato Salads'));
-        }
-        for (let i = 0; i < 2; i++) {
-            subjects.push(product('Categories', 'Classic Chilled Salads', 'Cole Slaws'));
-        }
-
-        const expected = {
-            title: 'categoryHeirarchy',
-            values: [
-                {
-                    title: 'Categories',
-                    attribute: 'categoryAttribute',
-                    count: 4,
-                    values: [
-                        {
-                            title: 'Categories'
-                        }
-                    ],
-                    children: [
-                        {
-                            title: 'Classic Chilled Salads',
-                            attribute: 'topLevelCategory',
-                            count: 4,
-                            values: [
-                                {
-                                    title: 'Classic Chilled Salads',
-                                    parent: 'categoryAttribute'
-                                }
-                            ],
-                            children: [
-                                {
-                                    title: 'Potato Salads',
-                                    attribute: 'subCategory',
-                                    count: 2,
-                                    values: [
-                                        {
-                                            title: 'Potato Salads',
-                                            parent: 'topLevelCategory'
-                                        }
-                                    ]
-                                }, {
-                                    title: 'Cole Slaws',
-                                    attribute: 'subCategory',
-                                    count: 2,
-                                    values: [
-                                        {
-                                            title: 'Cole Slaws',
-                                            parent: 'topLevelCategory'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
-
-        const options = {
-            title: 'categoryHeirarchy',
-            attribute: 'categoryHeirarchy',
-            hierachy: true
-        };
-
-        const actual = uniqueObject(options, subjects);
+        const actual = flattenDedup('category', subjects, 'id', function() {});
 
         expect(actual).toEqual(expected);
 
     });
+
+    it('throws when keys are not unique', () => {
+        const subjects = [
+            {
+                title: 'Fruit Salad',
+                category: [
+                    {
+                        id: 1,
+                        title: 'Fruit'
+                    },
+                    {
+                        id: 1,
+                        title: 'Salad',
+                        underling: [{
+                            id: 111,
+                            title: 'Really a desert'
+                        }]
+                    }
+                ]
+            },
+            {
+                title: 'Pasta Salad',
+                category: [
+                    {
+                        id: 1,
+                        title: 'Pasta'
+                    },
+                    {
+                        id: 1,
+                        title: 'Salad'
+                    }
+                ]
+            }
+        ];
+
+        expect(() => flattenDedup('category', subjects, 'id', function() {})).toThrow(/keys on filter attributes must be unique/);
+    });
+
 });

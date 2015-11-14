@@ -16,13 +16,15 @@ function recurse(arr, fn, parent = null, hierarchicalCategory = '') {
 }
 
 export function recurseLevel(arr, childAttribute, fn) {
-    fn(arr);
+    arr = fn(arr);
+
     for (let i = 0, len = arr.length; i < len; i++) {
         const item = arr[i];
         if (item[childAttribute]) {
-            recurse(item[childAttribute], childAttribute, fn);
+            recurseLevel(item[childAttribute], childAttribute, fn);
         }
     }
+    return arr;
 }
 
 function objectInArray(arr, fn) {
@@ -82,8 +84,10 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
 
                 const attributeKey = parent ? `${parent[idField]}-${item[idField]}` : item[idField];
 
+
                 // add an entry it
                 parentArray.push({
+                    ...item,
                     [idField]: item[idField],
                     value: item[displayProperty],
                     count: 1,

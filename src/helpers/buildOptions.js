@@ -131,6 +131,7 @@ export function uniqueObject(configValue, items, sortFn) {
     let values = flattenRecursive(attribute, items, id, saveFn, attributeDisplayValue);
 
     if (typeof sortFn === 'function') {
+
         values = recurseLevel(values, 'children', sortFn);
     }
 
@@ -157,7 +158,8 @@ export function buildOptionsList(items, criteria, sortOptions) {
     filterableCriteria = criteria;
 
     let optionGroups = filterableCriteria.map(criteria => {
-        return getUniqueValues(criteria, items, sortOptions[criteria.type]);
+
+        return getUniqueValues(criteria, items, sortOptions[criteria.attribute]);
     });
 
     return {

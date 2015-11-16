@@ -1,6 +1,6 @@
 {
   "name": "redux-filter",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Higher order react component for filtering collections",
   "main": "./lib/index.js",
   "scripts": {

@@ -36,28 +36,32 @@ describe('flatten recursive', () => {
         const expected = [
             {
                 value: 'Fruit',
+                title: 'Fruit',
                 attribute: 1,
                 count: 1,
                 id: 1
             }, {
                 value: 'Salad',
+                title: 'Salad',
                 attribute: 11,
                 count: 2,
                 id: 11
             }, {
                 value: 'Pasta',
+                title: 'Pasta',
                 attribute: 2,
                 count: 1,
                 id: 2
             }];
 
-        const actual = flattenDedup('category', subjects, 'id', function() {});
+        const actual = flattenDedup('category', subjects, 'id', function () {
+        });
 
         expect(actual).toEqual(expected);
 
     });
 
-    it('nested attribute objects', () => {
+    it('nested attribute objects multiple children', () => {
         const subjects = [
             {
                 title: 'Fruit Salad',
@@ -94,22 +98,103 @@ describe('flatten recursive', () => {
         const expected = [
             {
                 value: 'Fruit',
+                title: 'Fruit',
                 attribute: 1,
                 count: 1,
                 id: 1
             }, {
                 value: 'Salad',
+                title: 'Salad',
                 attribute: 11,
                 count: 2,
                 id: 11,
                 underling: [{
                     id: 111,
                     value: 'Really a desert',
+                    title: 'Really a desert',
                     count: 1,
                     attribute: '11-111'
                 }]
             }, {
                 value: 'Pasta',
+                title: 'Pasta',
+                attribute: 2,
+                count: 1,
+                id: 2
+            }];
+
+        const actual = flattenDedup('category', subjects, 'id', function () {});
+
+        expect(actual).toEqual(expected);
+
+    });
+
+    it('nested attribute objects', () => {
+        const subjects = [
+            {
+                title: 'Fruit Salad',
+                category: [
+                    {
+                        id: 1,
+                        title: 'Fruit'
+                    },
+                    {
+                        id: 11,
+                        title: 'Salad',
+                        underling: [{
+                            id: 111,
+                            title: 'Really a desert'
+                        }, {
+                            id: 11001,
+                            title: 'Really sweet a desert'
+                        }]
+                    }
+                ]
+            },
+            {
+                title: 'Pasta Salad',
+                category: [
+                    {
+                        id: 2,
+                        title: 'Pasta'
+                    },
+                    {
+                        id: 11,
+                        title: 'Salad'
+                    }
+                ]
+            }
+        ];
+
+        const expected = [
+            {
+                value: 'Fruit',
+                title: 'Fruit',
+                attribute: 1,
+                count: 1,
+                id: 1
+            }, {
+                value: 'Salad',
+                title: 'Salad',
+                attribute: 11,
+                count: 2,
+                id: 11,
+                underling: [{
+                    id: 111,
+                    value: 'Really a desert',
+                    title: 'Really a desert',
+                    count: 1,
+                    attribute: '11-111'
+                }, {
+                    id: 11001,
+                    title: 'Really sweet a desert',
+                    attribute: '11-11001',
+                    count: 1,
+                    value: 'Really sweet a desert'
+                }]
+            }, {
+                value: 'Pasta',
+                title: 'Pasta',
                 attribute: 2,
                 count: 1,
                 id: 2

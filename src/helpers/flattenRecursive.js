@@ -16,13 +16,15 @@ function recurse(arr, fn, parent = null, hierarchicalCategory = '') {
 }
 
 export function recurseLevel(arr, childAttribute, fn) {
-    fn(arr);
+    arr = fn(arr);
+
     for (let i = 0, len = arr.length; i < len; i++) {
         const item = arr[i];
         if (item[childAttribute]) {
-            recurse(item[childAttribute], childAttribute, fn);
+            recurseLevel(item[childAttribute], childAttribute, fn);
         }
     }
+    return arr;
 }
 
 function objectInArray(arr, fn) {

@@ -119,6 +119,8 @@ Default: `[]`
 Attributes on subjects that you want to filter. Each object in this array will build up a unique list of properties based
 on `subjects` and inject as `optionGroups` into your component. See the example under `optionGroups` for example of output
 
+Each criteria can he marked as `hierarchical` which will trigger hierarchical `optionGroups`. See `examples/hiearchy-filter` 
+
 ### `filterableCriteriaSortOptions` `{Object.<string, function>}`
 Default: `{}`
 

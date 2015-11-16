@@ -84,6 +84,7 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
 
                 // add an entry it
                 parentArray.push({
+                    ...copyShallow(item),
                     [idField]: item[idField],
                     value: item[displayProperty],
                     count: 1,
@@ -120,4 +121,15 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
 
 
     return tree;
+}
+
+
+function copyShallow(obj) {
+    const result = {};
+    for(let prop in obj) {
+        if (obj.hasOwnProperty(prop) && !(typeof obj[prop] == 'object')) {
+            result[prop] = obj[prop];
+        }
+    }
+    return result;
 }

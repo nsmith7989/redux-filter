@@ -72,7 +72,7 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
             } else {
                 // find parent node
                 const parentNode = find(tree, hierarchicalCategory, i => i[idField] == parent[idField]);
-                if (!parentNode.children) {
+                if (!parentNode[hierarchicalCategory]) {
                     parentNode[hierarchicalCategory] = [];
                 }
                 parentArray = parentNode[hierarchicalCategory];
@@ -84,10 +84,9 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
 
                 const attributeKey = parent ? `${parent[idField]}-${item[idField]}` : item[idField];
 
-
                 // add an entry it
                 parentArray.push({
-                    ...item,
+                    ...copyShallow(item),
                     [idField]: item[idField],
                     value: item[displayProperty],
                     count: 1,
@@ -124,4 +123,15 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
 
 
     return tree;
+}
+
+
+function copyShallow(obj) {
+    const result = {};
+    for(let prop in obj) {
+        if (obj.hasOwnProperty(prop) && !(typeof obj[prop] == 'object')) {
+            result[prop] = obj[prop];
+        }
+    }
+    return result;
 }

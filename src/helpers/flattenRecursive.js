@@ -70,7 +70,7 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
             } else {
                 // find parent node
                 const parentNode = find(tree, hierarchicalCategory, i => i[idField] == parent[idField]);
-                if (!parentNode.children) {
+                if (!parentNode[hierarchicalCategory]) {
                     parentNode[hierarchicalCategory] = [];
                 }
                 parentArray = parentNode[hierarchicalCategory];

@@ -81,8 +81,8 @@ class App extends Component {
 
         const { currentPage, collection } = this.props;
         const productsInView = collection.slice(
-            (+currentPage * PER_PAGE),
-            (+currentPage * PER_PAGE) + PER_PAGE
+            ((+currentPage - 1) * PER_PAGE),
+            ((+currentPage - 1) * PER_PAGE) + PER_PAGE
         );
         if (collection.length) {
             return productsInView.map((product, idx) => {

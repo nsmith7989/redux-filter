@@ -58,6 +58,8 @@ Wrap filter App in `<Filter>`, passing in config options as props to `<Filter>`.
 - `optionGroups` `{Array.<Object>}`. Unique values of the attributes from subjects taken from the `filterableCriteria` option.
 It also `count`s the number of subjects that meet the attribute.
 
+- `currentPage` `{Number}`. Current page after calling `goToPage`. NOTE: if a filter is applied `currentPage` will be set to 1. 
+
 Example:
 
 
@@ -105,6 +107,8 @@ If a filter of that attribute is not applied it will be added. If a filter of th
 
 - `toggleOnly` `{function(filterAttribute, filterValue):void}` Remove all other filters of this attribute, except the one applied.
 Useful in select box or radio button scenarios.
+
+- `goToPage` `{function(pageNum):void}`. Set the currentPage to `pageNum`
 
 ## `<Filter />` props
 
@@ -164,4 +168,4 @@ See the examples folder for a demonstration on restoring state from a url hash.
 
 ## Todo
 
-- [ ] Paging
+- [x] Paging

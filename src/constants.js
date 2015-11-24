@@ -8,3 +8,4 @@ export const TOGGLE_FILTER_ONLY = 'TOGGLE_FILTER_ONLY';
 export const CLEAR_FILTERS = 'CLEAR_FILTERS';
 export const APPLY_SORT = 'APPLY_SORT';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
+export const GO_TO_PAGE = 'GO_TO_PAGE';

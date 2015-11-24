@@ -73,18 +73,44 @@ class Product extends Component {
     }
 }
 
+const PER_PAGE = 10;
+
 class App extends Component {
 
+    renderProducts() {
+
+        const { currentPage, collection } = this.props;
+        const productsInView = collection.slice(
+            (+currentPage * PER_PAGE),
+            (+currentPage * PER_PAGE) + PER_PAGE
+        );
+        if (collection.length) {
+            return productsInView.map((product, idx) => {
+                return <Product key={idx} {...product} />;
+            });
+        } else {
+            return <p>No Sweaters found.</p>;
+        }
+
+    }
+
+    renderPager() {
+        const { collection, goToPage } = this.props;
+        // calc number of pages we'd need
+        const numPages = Math.ceil(collection.length / PER_PAGE);
+        const pagerItems = [];
+        for(let i = 1; i < numPages; i++) {
+            pagerItems.push(<a onClick={() => goToPage(i)}>{i}</a>);
+        }
+        return pagerItems;
+    }
+
     render() {
-        const {collection} = this.props;
         return <div className="product-filter">
             <Filters {...this.props} />
+            <div className="pager">{this.renderPager()}</div>
             <div className="products">
-                {
-                    collection.length ?
-                    collection.map((product, idx) => <Product key={idx} {...product} />) :
-                    <p>No Sweaters found.</p>
-                }
+                {this.renderProducts()}
             </div>
         </div>;
     }
@@ -101,9 +127,10 @@ const logger = store => next => action => {
 };
 
 const filters = state => {
-    if (!Object.keys(state.appliedFilters).length) return '';
+    if (!Object.keys(state.appliedFilters).length && !state.page) return '';
     return qs.stringify({
-        appliedFilters: state.appliedFilters
+        appliedFilters: state.appliedFilters,
+        page: state.page
     });
 };
 
@@ -113,7 +140,7 @@ function hashURLFromState(state) {
 
 const getStateFromHash = () => {
     const filterString = window.location.hash.replace('#!/?', '');
-    return qs.parse(filterString)
+    return qs.parse(filterString);
 };
 
 const urlhash = store => next => action => {
@@ -190,7 +217,7 @@ const config = {
         }
     ],
     middleware: [
-        logger, urlhash
+         urlhash
     ],
     initialState: getStateFromHash()
 };

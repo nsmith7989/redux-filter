@@ -16,7 +16,8 @@ function buildSelector(searchKeys, searchThreshold, sortItems) {
             appliedFilters: state.appliedFilters,
             keyword: state.keywordSearch,
             optionGroups: state.optionGroups,
-            sortFn: state.sortFn
+            sortFn: state.sortFn,
+            currentPage: state.page
         };
     };
 }
@@ -85,7 +86,9 @@ class Filter extends Component {
             keyword,
             sortItems,
             appliedFilters,
-            sortFn } = allProps;
+            sortFn,
+            currentPage
+            } = allProps;
 
         const boundActions = this.actions;
 
@@ -103,7 +106,8 @@ class Filter extends Component {
             keyword,
             appliedFilters,
             sortItems,
-            sortFn
+            sortFn,
+            currentPage
         });
     }
 

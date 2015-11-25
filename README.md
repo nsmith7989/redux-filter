@@ -1,5 +1,6 @@
 # Redux Filter
 [![Build Status](https://travis-ci.org/nsmith7989/redux-filter.svg?branch=master)](https://travis-ci.org/nsmith7989/redux-filter)
+[![Coverage Status](https://coveralls.io/repos/nsmith7989/redux-filter/badge.svg?branch=master&service=github)](https://coveralls.io/github/nsmith7989/redux-filter?branch=master)
 
 Higher Order React Component for filtering (and sorting) a collection of items. This is especially useful in product filters that
  mimic the sorting/filtering behavior of Amazon or Best Buy. See [the Sweater Example](https://github.com/nsmith7989/redux-filter/tree/master/examples/product-filtering).

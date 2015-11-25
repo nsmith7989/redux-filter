@@ -5,14 +5,15 @@
   "main": "./lib/index.js",
   "scripts": {
     "dev": "babel src --out-dir lib --watch",
-    "test": "mocha --compilers js:babel/register",
     "test-watch": "mocha --compilers js:babel/register --watch",
     "lint": "eslint src test --fix",
     "build:lib": "babel src --out-dir lib",
     "build:umd": "webpack src/index.js dist/redux-filter.js --config webpack.dist.config.js",
     "build": "npm run build:lib && npm run build:umd",
     "clean": "rm -rf lib && rm -rf dist",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run clean && npm run build",
+    "test": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha -- compilers js:babel/register test",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "babel-core": "^5.4.7",
     "babel-eslint": "^3.1.9",
     "babel-loader": "^5.1.2",
+    "coveralls": "^2.11.4",
     "eslint": "^1.6.0",
     "eslint-plugin-react": "^3.5.1",
     "expect": "^1.12.0",

@@ -4,6 +4,7 @@ node_js:
 script:
 - npm run lint
 - npm test
+after_success: 'npm run coveralls'
 deploy:
   provider: npm
   email: nathanael.b.smith@gmail.com

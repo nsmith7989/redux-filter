@@ -49,6 +49,7 @@ function sortFn(state = { fn: (items) => items }, action = {}) {
 }
 
 function page(state = 1, action = {}) {
+
     switch (action.type) {
         case GO_TO_PAGE:
             return action.page;

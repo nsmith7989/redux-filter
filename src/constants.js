@@ -9,3 +9,5 @@ export const CLEAR_FILTERS = 'CLEAR_FILTERS';
 export const APPLY_SORT = 'APPLY_SORT';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
 export const GO_TO_PAGE = 'GO_TO_PAGE';
+
+export const UPDATE_SUBJECTS = 'UPDATE_SUBJECTS';

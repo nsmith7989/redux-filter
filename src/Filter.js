@@ -57,6 +57,13 @@ class Filter extends Component {
         this.store.subscribe(() => this.computeState());
     }
 
+    componentWillReceiveProps(nextProps) {
+        // check if subjecsts are different
+        if(nextProps.subjects !== this.props.subjects) {
+            this.actions.updateSubjects(nextProps.subjects);
+        }
+    }
+
     render() {
 
         const { props, state } = this;

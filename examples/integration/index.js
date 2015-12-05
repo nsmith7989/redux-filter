@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import Filter, { reducer as flterReducer, filterActions, buildInitialState, buildSelector } from 'redux-filter';
 import sweaters from './data.js';
 
@@ -49,7 +49,7 @@ const initialState = buildInitialState({
     }
 });
 
-
+console.log(initialState);
 
 // create an unconnected redux store
 const store = createStore(combineReducers({

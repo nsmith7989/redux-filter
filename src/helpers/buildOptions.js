@@ -1,11 +1,9 @@
-import flattenRecursive, { recurseLevel } from './flattenRecursive.js';
-
-const filterFns = {};
-
-let filterableCriteria;
+import flattenRecursive, {recurseLevel} from './flattenRecursive.js';
 
 function saveFn(attribute, key, fn) {
-    filterFns[attribute + '__' + key] = fn;
+    return {
+        [`${attribute}__${key}`]: fn
+    };
 }
 
 function accumulate(collection, value) {
@@ -18,7 +16,8 @@ function accumulate(collection, value) {
 
 export function getFrequencyOfUniqueValues(attribute, items) {
     return valueMap(attribute, items, (prev, currentVal) => {
-        if (currentVal === undefined) return prev;
+        if (currentVal === undefined)
+            return prev;
 
         if (currentVal instanceof Array) {
             currentVal.forEach(val => {
@@ -38,18 +37,20 @@ function valueMap(attribute, items, fn) {
 }
 
 export function uniqueGeneric(configValue, items, keySortFn = null) {
-    const { title, attribute } = configValue;
+    const {title, attribute} = configValue;
     const options = getFrequencyOfUniqueValues(attribute, items);
-    // save functions
-    Object.keys(options).forEach(key => {
+    const filterFns = Object.keys(options).reduce((acc, key) => {
         const fn = item => {
-            if (item[attribute] instanceof Array) {
+            if (item[attribute]instanceof Array) {
                 return item[attribute].indexOf(key) > -1;
             }
             return item[attribute] === key;
         };
-        saveFn(attribute, key, fn);
-    });
+        return {
+            ...acc,
+            ...saveFn(attribute, key, fn)
+        };
+    }, {});
 
     let keys = Object.keys(options);
     // keys might have a sort function
@@ -58,20 +59,19 @@ export function uniqueGeneric(configValue, items, keySortFn = null) {
     }
 
     return {
-        title,
-        values: keys.map(key => {
-            return {
-                value: key,
-                count: options[key],
-                attribute: attribute
-            };
-        })
+        filterFns,
+        values: {
+            title,
+            values: keys.map(key => {
+                return {value: key, count: options[key], attribute: attribute};
+            })
+        }
     };
 
 }
 
 function buildRangeFn(min, max, attribute) {
-    return function (item) {
+    return function(item) {
         return item[attribute] >= min && item[attribute] <= max;
     };
 }
@@ -91,6 +91,7 @@ function within(min, max, num) {
 
 export function uniqueRanges(configValue, items, sortFn = null) {
     const {title, attribute, ranges} = configValue;
+    let filterFns = {};
 
     let options = valueMap(attribute, items, (prev, currentValue) => {
         // find which range i falls in
@@ -99,9 +100,12 @@ export function uniqueRanges(configValue, items, sortFn = null) {
             return within(min, max, currentValue);
         });
 
-        const { min, max } = foundRange.range;
+        const {min, max} = foundRange.range;
         // build range fn
-        saveFn(attribute, foundRange.displayValue, buildRangeFn(min, max, attribute));
+        filterFns = {
+            ...filterFns,
+            ...saveFn(attribute, foundRange.displayValue, buildRangeFn(min, max, attribute))
+        };
 
         accumulate(prev, foundRange.displayValue);
         return prev;
@@ -113,22 +117,26 @@ export function uniqueRanges(configValue, items, sortFn = null) {
     }
 
     return {
-        title,
-        values: keys.map(key => {
-            return {
-                count: options[key],
-                attribute,
-                value: key
-            };
-        })
+        filterFns,
+        values: {
+            title,
+            values: keys.map(key => {
+                return {count: options[key], attribute, value: key};
+            })
+        }
     };
 
 }
 
 export function uniqueObject(configValue, items, sortFn) {
-    const { attribute, title, id, attributeDisplayValue = 'title' } = configValue;
+    const {
+        attribute,
+        title,
+        id,
+        attributeDisplayValue = 'title'
+    } = configValue;
 
-    let values = flattenRecursive(attribute, items, id, saveFn, attributeDisplayValue);
+    let {values, filterFns} = flattenRecursive(attribute, items, id, saveFn, attributeDisplayValue);
 
     if (typeof sortFn === 'function') {
 
@@ -136,12 +144,14 @@ export function uniqueObject(configValue, items, sortFn) {
     }
 
     return {
-        title,
-        values
+        filterFns,
+        values: {
+            title,
+            values
+        }
     };
 
 }
-
 
 function getUniqueValues(configValue, items, sortFn) {
     if (configValue.ranges) {
@@ -150,20 +160,23 @@ function getUniqueValues(configValue, items, sortFn) {
     if (configValue.hierarchy) {
         return uniqueObject(configValue, items, sortFn);
     }
-
     return uniqueGeneric(configValue, items, sortFn);
 }
 
 export function buildOptionsList(items, criteria, sortOptions) {
-    filterableCriteria = criteria;
 
-    let optionGroups = filterableCriteria.map(criteria => {
+    return criteria.reduce((acc, crit) => {
 
-        return getUniqueValues(criteria, items, sortOptions[criteria.attribute]);
-    });
+        const {values, filterFns} = getUniqueValues(crit, items, sortOptions[crit.attribute]);
 
-    return {
-        optionGroups,
-        filterFns
-    };
+        return {
+            optionGroups: (acc.optionGroups || []).concat(values),
+            filterFns: {
+                ...acc.filterFns,
+                ...filterFns
+            }
+        };
+
+    }, {});
+
 }

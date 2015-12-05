@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 
-import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE } from '../constants.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE, UPDATE_SUBJECTS } from '../constants.js';
 import toggle, {toggleOnly, clearFilter} from '../helpers/toggle.js';
+import { buildInitialState } from '../store/index';
 
 function appliedFilters(state = {}, action = null) {
     switch (action.type) {
@@ -27,17 +28,6 @@ function keywordSearch(state = '', action = null) {
     }
 }
 
-function subjectsCollection(state = []) {
-    return state;
-}
-
-function filterFns(state = {}) {
-    return state;
-}
-
-function optionGroups(state = {}) {
-    return state;
-}
 
 function sortFn(state = { fn: (items) => items }, action = {}) {
     switch (action.type) {
@@ -64,12 +54,40 @@ function page(state = 1, action = {}) {
     }
 }
 
-export default combineReducers({
-    appliedFilters,
-    keywordSearch,
-    subjectsCollection,
-    filterFns,
-    optionGroups,
-    sortFn,
-    page
-});
+function subjectsCollection(state = []) {
+    return state;
+}
+
+function filterFns(state = {}) {
+    return state;
+}
+
+function optionGroups(state = {}) {
+    return state;
+}
+
+export default function buildReducer(updateSubjects) {
+
+    return function reducer(state = {}, action = {}) {
+
+        const compiledState = {
+            appliedFilters: appliedFilters(state.appliedFilters, action),
+            keywordSearch: keywordSearch(state.keywordSearch, action),
+            sortFn: sortFn(state.sortFn, action),
+            page: page(state.page),
+            subjectsCollection: subjectsCollection(state.subjectsCollection, action),
+            filterFns: filterFns(state.filterFns, action),
+            optionGroups: optionGroups(state.optionGroups, action)
+        };
+
+        switch (action.type) {
+            case UPDATE_SUBJECTS:
+                return {
+                    ...compiledState,
+                    ...updateSubjects(action.subjects)
+                };
+            default:
+                return compiledState;
+        }
+    }
+}

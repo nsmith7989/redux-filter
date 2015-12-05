@@ -56,10 +56,11 @@ function find(arr, childAttribute, fn) {
     return false;
 }
 
-export default function flattenDedup(attribute, subjects, idField, cb, displayProperty = 'title') {
+export default function flattenDedup(attribute, subjects, idField, saveFn, displayProperty = 'title') {
 
     const tree = [];
     const seenKeys = {};
+    let filterFns = {};
 
     subjects.forEach(subject => {
         recurse(subject[attribute], (item, parent, hierarchicalCategory) => {
@@ -98,7 +99,10 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
                     return find(subject[attribute], hierarchicalCategory, attr => attr[idField] === item[idField]);
                 };
 
-                cb(attributeKey, item[displayProperty], filterFn);
+                filterFns = {
+                    ...filterFns,
+                    ...saveFn(attributeKey, item[displayProperty], filterFn)
+                };
 
             } else {
                 // find and increment it
@@ -121,8 +125,10 @@ export default function flattenDedup(attribute, subjects, idField, cb, displayPr
         }
     }
 
-
-    return tree;
+    return {
+        values: tree,
+        filterFns
+    };
 }
 
 

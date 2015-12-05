@@ -1,8 +1,6 @@
-import { combineReducers } from 'redux';
-
 import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE, UPDATE_SUBJECTS } from '../constants.js';
 import toggle, {toggleOnly, clearFilter} from '../helpers/toggle.js';
-import { buildInitialState } from '../store/index';
+
 
 function appliedFilters(state = {}, action = null) {
     switch (action.type) {
@@ -89,5 +87,5 @@ export default function buildReducer(updateSubjects) {
             default:
                 return compiledState;
         }
-    }
+    };
 }

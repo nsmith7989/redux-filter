@@ -232,4 +232,70 @@ describe('Filter Component', () => {
         });
     });
 
+    describe('hiearcical filter', () => {
+
+        const makeChild = () => {
+            const config = {
+                subjects: [
+                    {
+                        "title": "1000 Island Dressing",
+                        "filterableCriteria": [{
+                            "content_id": "218130",
+                            "title": "Food Type",
+                            "position": "1",
+                            "children": [{
+                                "content_id": "218133",
+                                "title": "Salad Dressings and Dips",
+                                "position": "3",
+                                "children": [{
+                                    "content_id": "218147",
+                                    "parent_id": "216468",
+                                    "title": "Dressings",
+                                    "position": "2",
+                                    "category": "_id_218133_id_"
+                                }]
+                            }]
+                        }, {
+                            "content_id": "218131",
+                            "title": "Dietary Concerns",
+                            "position": "2",
+                            "children": [{
+                                "content_id": "218145",
+                                "title": "Gluten Free",
+                                "position": "4"
+                            }, {
+                                "content_id": "224159",
+                                "title": "Allergens",
+                                "position": "6",
+                                "children": [{
+                                    "content_id": "224160",
+                                    "title": "Egg",
+                                    "position": "1"
+                                }]
+                            }]
+                        }]
+                    },
+                    {title: 'bar', type: 'bar'}
+                ],
+                filterableCriteria: [{
+                    title: 'attributes',
+                    attribute: 'filterableCriteria',
+                    hierarchy: true,
+                    id: 'content_id',
+                    attributeDisplayValue: 'title'
+                }]
+            };
+
+            const tree = TestUtils.renderIntoDocument(
+              <Filter {...testConfig}>
+                  <Child />
+              </Filter>
+            );
+            return TestUtils.findRenderedComponentWithType(tree, Child);
+        };
+
+
+
+    });
+
 });

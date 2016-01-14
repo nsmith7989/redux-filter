@@ -1,4 +1,7 @@
 function recurse(arr, fn, parent = null, hierarchicalCategory = '') {
+    // some items might not have the attribute we're building
+    if (!arr) return;
+
     for (let i = 0, len = arr.length; i < len; i++) {
         const item = arr[i];
         fn(item, parent, hierarchicalCategory);

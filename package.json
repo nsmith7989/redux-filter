@@ -13,6 +13,7 @@
     "clean": "rm -rf lib && rm -rf dist",
     "prepublish": "npm run clean && npm run build",
     "test": "istanbul cover _mocha -- --compilers js:babel/register test",
+    "test-debug": "node-debug  _mocha --compilers --debug-brk",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {

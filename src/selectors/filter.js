@@ -1,7 +1,7 @@
 import Fuse from 'fuse.js';
 import { createSelector } from 'reselect';
 
-export default function(searchKeys, searchThreshold) {
+export default function(searchKeys, searchThreshold, sortItems, stateResolver = state => state) {
 
     function keywordFilter(items, searchText, keys) {
 
@@ -40,15 +40,13 @@ export default function(searchKeys, searchThreshold) {
         const filteredResults = filter(appliedFilters, subjectsCollection, functions);
         const keywordFiltered = keywordFilter(filteredResults, keyword);
         return sortFn.fn(keywordFiltered);
-
     };
 
-    const appliedFiltersSelector = state => state.appliedFilters;
-    const keywordSelector = state => state.keywordSearch;
-    const functions = state => state.filterFns;
-    const subjectsCollection = state => state.subjectsCollection;
-    const sortFn = state => state.sortFn;
-
+    const appliedFiltersSelector = state => stateResolver(state).appliedFilters;
+    const keywordSelector = state => stateResolver(state).keywordSearch;
+    const functions = state => stateResolver(state).filterFns;
+    const subjectsCollection = state => stateResolver(state).subjectsCollection;
+    const sortFn = state => stateResolver(state).sortFn;
 
 
     return createSelector(

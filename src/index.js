@@ -1,116 +1,14 @@
-import { cloneElement, Component, Children } from 'react';
-import createStoreFromSubjects from './store/index.js';
-import * as actions from './actions/creators.js';
-import filterFactory from './selectors/filter.js';
-
-const isDom = instance => {
-    return typeof instance.type !== 'function';
-};
-
-function buildSelector(searchKeys, searchThreshold, sortItems) {
-    // build filter selector
-    const filter = filterFactory(searchKeys, searchThreshold, sortItems);
-    return function(state) {
-        return {
-            collection: filter(state),
-            appliedFilters: state.appliedFilters,
-            keyword: state.keywordSearch,
-            optionGroups: state.optionGroups,
-            sortFn: state.sortFn,
-            currentPage: state.page
-        };
-    };
-}
-
-class Filter extends Component {
-
-    constructor(props) {
-        super(props);
-        const {
-            subjects = [],
-            filterableCriteria = [],
-            filterableCriteriaSortOptions = {},
-            searchThreshold = .2,
-            searchKeys = [],
-            sortItems = [],
-            middleware = [],
-            initialState = {}
-            } = props;
-
-        // instantiate here
-        this.store = createStoreFromSubjects(subjects, {
-            filterableCriteria, filterableCriteriaSortOptions
-        }, middleware, initialState);
-
-        // bind action creators to the store
-        this.actions = Object.keys(actions).reduce((prev, actionKey) => {
-            prev[actionKey] = (...args) => this.store.dispatch(actions[actionKey](...args));
-            return prev;
-        }, {});
-
-        // build selector based on props
-        this.select = buildSelector(searchKeys, searchThreshold, sortItems);
-
-        // if there is a sort function, apply it
-        if (sortItems.length && (typeof sortItems[0].fn === 'function')) {
-            this.actions.applySort(sortItems[0]);
-        }
-
-        // compute first state
-        this.state = this.select(this.store.getState());
-
-    }
-
-    computeState() {
-        const nextState = this.select(this.store.getState());
-        this.setState(nextState);
-    }
-
-    componentWillMount() {
-        // subscribe to the store
-        this.store.subscribe(() => this.computeState());
-    }
-
-    render() {
-
-        const { props, state } = this;
-        const allProps = {
-            ...props,
-            ...state
-        };
-
-        const {
-            children,
-            collection,
-            optionGroups,
-            keyword,
-            sortItems,
-            appliedFilters,
-            sortFn,
-            currentPage
-            } = allProps;
-
-        const boundActions = this.actions;
-
-        // can only have one child
-        Children.only(children);
-        // enforce that child component must be a react element
-        if (isDom(children)) {
-            throw new Error('child must be a react component, not a dom element');
-        }
-
-        return cloneElement(children, {
-            ...boundActions,
-            collection,
-            optionGroups,
-            keyword,
-            appliedFilters,
-            sortItems,
-            sortFn,
-            currentPage
-        });
-    }
-
-}
-
+import Filter from './Filter';
 export default Filter;
+
+import * as filterActions from './actions/creators';
+export { filterActions };
+
+import reducer from './reducers/root';
+export { reducer };
+
+import { buildInitialState } from './store/index';
+export { buildInitialState };
+
+import buildSelector from './selectors/buildSelector';
+export { buildSelector };

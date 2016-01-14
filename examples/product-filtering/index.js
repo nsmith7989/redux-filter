@@ -196,9 +196,41 @@ const config = {
 };
 
 
+class FilterWrap extends Component {
+    constructor(props) {
+        super(props);
+        const randomIndex = this.randomIndex()
+        this.state = {
+            subjects: config.subjects.slice(randomIndex, randomIndex + 5)
+        }
+    }
+
+    randomIndex() {
+        return Math.ceil(Math.random() * config.subjects.length);
+
+    }
+
+    randomSubjects() {
+        const index = this.randomIndex();
+
+        this.setState({
+            subjects: config.subjects.slice(index, index + 5)
+        });
+    }
+
+    componentDidMount() {
+        setInterval(() => this.randomSubjects(), 2000);
+    }
+
+    render() {
+        return <Filter {...config} subjects={this.state.subjects} >
+            <App />
+        </Filter>
+    }
+
+}
+
 render(
-    <Filter {...config}>
-        <App />
-    </Filter>,
+    <FilterWrap />,
     document.getElementById('root')
 );

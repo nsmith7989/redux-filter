@@ -57,7 +57,7 @@ describe('flatten recursive', () => {
         const actual = flattenDedup('category', subjects, 'id', function () {
         });
 
-        expect(actual).toEqual(expected);
+        expect(actual.values).toEqual(expected);
 
     });
 
@@ -125,7 +125,7 @@ describe('flatten recursive', () => {
 
         const actual = flattenDedup('category', subjects, 'id', function () {});
 
-        expect(actual).toEqual(expected);
+        expect(actual.values).toEqual(expected);
 
     });
 
@@ -202,7 +202,7 @@ describe('flatten recursive', () => {
 
         const actual = flattenDedup('category', subjects, 'id', function() {});
 
-        expect(actual).toEqual(expected);
+        expect(actual.values).toEqual(expected);
 
     });
 
@@ -320,7 +320,7 @@ describe('flatten recursive', () => {
 
         const unordered = flattenDedup('category', subjects, 'id', function () {});
 
-        const ordered = recurseLevel(unordered, 'children', items => {
+        const ordered = recurseLevel(unordered.values, 'children', items => {
             return [...items].sort((a, b) => a.order > b.order ? 1 : -1);
         });
 

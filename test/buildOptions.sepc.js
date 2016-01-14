@@ -82,7 +82,7 @@ describe('unique values', () => {
             attribute: 'type'
         }, config.subjects);
 
-        expect(actual).toEqual(expected);
+        expect(actual.values).toEqual(expected);
     });
 
     it('sorts option keys', () => {
@@ -114,7 +114,7 @@ describe('unique values', () => {
             attribute: 'type'
         }, config.subjects, sortFn);
 
-        expect(actual).toEqual(expected);
+        expect(actual.values).toEqual(expected);
     });
 
 
@@ -183,7 +183,7 @@ describe('uniqueRanges', () => {
 
         const actual = uniqueRanges(criteria, subjects());
 
-        expect(actual).toEqual(expected);
+        expect(actual.values).toEqual(expected);
 
     });
 

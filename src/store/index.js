@@ -21,10 +21,10 @@ export default function buildStore(subjectsCollection, config, middleware, initi
 
     const {filterableCriteria, filterableCriteriaSortOptions} = config;
 
-    const subjectsBuilder = buildInitialState({filterableCriteria, filterableCriteriaSortOptions});
+    const updateSubjects = buildInitialState({filterableCriteria, filterableCriteriaSortOptions});
 
-    return finalStore(rootReducer(subjectsBuilder), {
+    return finalStore(rootReducer(updateSubjects), {
         ...initialState,
-        ...subjectsBuilder(subjectsCollection)
+        ...updateSubjects(subjectsCollection)
     });
 }

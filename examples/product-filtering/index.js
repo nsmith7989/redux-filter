@@ -199,7 +199,7 @@ const config = {
 class FilterWrap extends Component {
     constructor(props) {
         super(props);
-        const randomIndex = this.randomIndex()
+        const randomIndex = this.randomIndex();
         this.state = {
             subjects: config.subjects.slice(randomIndex, randomIndex + 5)
         }

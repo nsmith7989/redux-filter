@@ -1,9 +1,8 @@
 import { createStore, combineReducers } from 'redux';
-import Filter, { reducer as flterReducer, filterActions, buildInitialState, buildSelector } from 'redux-filter';
+import Filter, { reducer as flterReducer, buildStore, filterActions, buildSelector } from 'redux-filter';
 import sweaters from './data.js';
 
-// build out initial state
-const initialState = buildInitialState({
+const config = {
     subjectsCollection: sweaters,
     filterableCriteria: [
         {
@@ -47,16 +46,13 @@ const initialState = buildInitialState({
         type: (items) => [...items].sort(),
         color: (items) => [...items].sort()
     }
-});
+};
 
-console.log(initialState);
+const store = buildStore(sweaters, {
+    filterableCriteria: config.filterableCriteria,
+    filterableCriteriaSortOptions: config.filterableCriteriaSortOptions
+}, [], {});
 
-// create an unconnected redux store
-const store = createStore(combineReducers({
-    filterState: flterReducer
-}),
-// filter state can exist anywhere on the state tree. You will need to pass a resolver to the selector
-{filterState: initialState});
 
 // create a selector with config options
 // including a resolver that points where the filter state lives withing the state tree
@@ -73,12 +69,13 @@ const selector = buildSelector([], .6, [
             return [...items].sort((a, b) => b.price - a.price);
         }
     }
-], state => state.filterState);
+]);
 
+console.log(store.getState());
 
 // call the actions from anything
 let unsubscribe = store.subscribe(() => {
-    console.log(selector(store.getState()));
+    console.log(store.getState());
 });
 
 store.dispatch(filterActions.goToPage(9));

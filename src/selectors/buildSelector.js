@@ -1,16 +1,17 @@
-import filterFactory from './filter.js';
+import { collection } from './filter.js';
 
-export default function buildSelector(searchKeys = [], searchThreshold = .6, sortItems, stateResolver = state => state) {
-    // build filter selector
-    const filter = filterFactory(searchKeys, searchThreshold, sortItems, stateResolver);
-    return function(state) {
-        return {
-            collection: filter(state),
+export default function buildSelector(stateResolver = state => state) {
+    return function mapStateToProps(state) {
+
+        const result = {
+            collection: collection(stateResolver(state)),
+            optionGroups: stateResolver(state).optionGroups,
             appliedFilters: stateResolver(state).appliedFilters,
             keyword: stateResolver(state).keywordSearch,
-            optionGroups: stateResolver(state).optionGroups,
             sortFn: stateResolver(state).sortFn,
             currentPage: stateResolver(state).page
         };
+    
+        return result;
     };
 }

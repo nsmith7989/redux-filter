@@ -1,6 +1,9 @@
 import { cloneElement, Component, Children } from 'react';
-import createStoreFromSubjects from './store/index.js';
 import * as actions from './actions/creators.js';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers/root.js';
+import { INIT } from './constants';
 
 import buildSelector from './selectors/buildSelector';
 
@@ -23,10 +26,32 @@ class Filter extends Component {
             initialState = {}
             } = props;
 
-        // instantiate here
-        this.store = createStoreFromSubjects(subjects, {
-            filterableCriteria, filterableCriteriaSortOptions
-        }, middleware, initialState);
+        const middlewares = [
+            thunk, ...middleware
+        ];
+
+        const finalStore = applyMiddleware(...middlewares)(createStore);
+
+        this.store = finalStore(
+            combineReducers({
+                filter: rootReducer
+            }),
+            {
+                filter: {
+                    subjects,
+                    filterableCriteria,
+                    filterableCriteriaSortOptions,
+                    searchThreshold,
+                    searchKeys,
+                    sortItems,
+                    ...initialState
+                }
+            }
+        );
+
+        this.store.dispatch({
+            type: INIT
+        });
 
         // bind action creators to the store
         this.actions = Object.keys(actions).reduce((prev, actionKey) => {
@@ -35,7 +60,7 @@ class Filter extends Component {
         }, {});
 
         // build selector based on props
-        this.select = buildSelector(searchKeys, searchThreshold, sortItems);
+        this.select = buildSelector(state => state.filter);
 
         // if there is a sort function, apply it
         if (sortItems.length && (typeof sortItems[0].fn === 'function')) {

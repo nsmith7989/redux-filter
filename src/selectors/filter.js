@@ -1,56 +1,58 @@
 import Fuse from 'fuse.js';
 import { createSelector } from 'reselect';
 
-export default function(searchKeys, searchThreshold, sortItems, stateResolver = state => state) {
+function keywordFilter(items, searchText, keys, searchThreshold) {
 
-    function keywordFilter(items, searchText, keys) {
+    if (searchText === undefined || searchText === '') return items;
 
-        if (searchText === undefined || searchText === '') return items;
+    var f = new Fuse(items, {
+        caseSensitive: false,
+        includeScore: false,
+        shouldSort: false,
+        threshold: searchThreshold,
+        keys: keys || searchKeys
+    });
+    
+    return f.search(searchText);
 
-        var f = new Fuse(items, {
-            caseSensitive: false,
-            includeScore: false,
-            shouldSort: false,
-            threshold: searchThreshold,
-            keys: keys || searchKeys
-        });
-
-        return f.search(searchText);
-
-    }
+}
 
 
-    function filter(appliedFilters, collection, functions) {
+function filter(appliedFilters, collection, functions) {
 
-        return collection.filter(item => {
+    return collection.filter(item => {
 
-            if (!Object.keys(appliedFilters).length) return true;
+        if (!Object.keys(appliedFilters).length) return true;
 
-            return Object.keys(appliedFilters).every(key => {
-                return appliedFilters[key].some(value => {
-                    const fn = functions[key + '__' + value];
-                    return (typeof fn === 'function') ? fn(item) : false;
-                });
+        return Object.keys(appliedFilters).every(key => {
+            return appliedFilters[key].some(value => {
+                const fn = functions[key + '__' + value];
+                return (typeof fn === 'function') ? fn(item) : false;
             });
         });
+    });
 
-    }
-
-    const composedSelector = (appliedFilters, keyword, subjectsCollection, functions, sortFn) => {
-        const filteredResults = filter(appliedFilters, subjectsCollection, functions);
-        const keywordFiltered = keywordFilter(filteredResults, keyword);
-        return sortFn.fn(keywordFiltered);
-    };
-
-    const appliedFiltersSelector = state => stateResolver(state).appliedFilters;
-    const keywordSelector = state => stateResolver(state).keywordSearch;
-    const functions = state => stateResolver(state).filterFns;
-    const subjectsCollection = state => stateResolver(state).subjectsCollection;
-    const sortFn = state => stateResolver(state).sortFn;
-
-
-    return createSelector(
-        [appliedFiltersSelector, keywordSelector, subjectsCollection, functions, sortFn],
-        composedSelector
-    );
 }
+
+const multiPartFilter = (appliedFilters, keyword, subjectsCollection, functions, sortFn, searchKeys, searchThreshold) => {
+    const filteredResults = filter(appliedFilters, subjectsCollection, functions);
+    const keywordFiltered = keywordFilter(filteredResults, keyword, searchKeys, searchThreshold);
+    return sortFn.fn(keywordFiltered);
+};
+
+const subjects = state => state.subjects;
+
+const appliedFilters = state => state.appliedFilters;
+const keywordSearch = state => state.keywordSearch;
+
+const filterFns = state => state.filterFns;
+
+const searchKeys = state => state.searchKeys;
+const sortFn = state => state.sortFn;
+const searchThreshold = state => state.searchThreshold;
+
+
+export const collection = createSelector(
+    [appliedFilters, keywordSearch, subjects, filterFns, sortFn, searchKeys, searchThreshold],
+    multiPartFilter
+);

@@ -7,10 +7,5 @@ export { filterActions };
 import reducer from './reducers/root';
 export { reducer };
 
-import buildStore, { buildInitialState } from './store/index';
-export { buildInitialState };
-export { buildStore };
-
-
 import buildSelector from './selectors/buildSelector';
 export { buildSelector };

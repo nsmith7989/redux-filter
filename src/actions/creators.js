@@ -1,4 +1,4 @@
-import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE, UPDATE_SUBJECTS } from '../constants.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE, UPDATE_SUBJECTS, INIT } from '../constants.js';
 
 
 export function toggleFilter(attribute, value) {
@@ -53,5 +53,11 @@ export function updateSubjects(subjects) {
     return {
         type: UPDATE_SUBJECTS,
         subjects
+    };
+}
+
+export function init() {
+    return {
+        type: INIT
     };
 }

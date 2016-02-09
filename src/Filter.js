@@ -1,7 +1,9 @@
 import { cloneElement, Component, Children } from 'react';
-import buildStore from './store/index.js';
 import * as actions from './actions/creators.js';
-
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers/root.js';
+import { INIT } from './constants';
 
 import buildSelector from './selectors/buildSelector';
 
@@ -24,18 +26,32 @@ class Filter extends Component {
             initialState = {}
             } = props;
 
+        const middlewares = [
+            thunk, ...middleware
+        ];
 
-        this.store = buildStore({
-            filter: {
-                subjects,
-                filterableCriteria,
-                filterableCriteriaSortOptions,
-                searchThreshold,
-                searchKeys,
-                sortItems,
-                ...initialState
+        const finalStore = applyMiddleware(...middlewares)(createStore);
+
+        this.store = finalStore(
+            combineReducers({
+                filter: rootReducer
+            }),
+            {
+                filter: {
+                    subjects,
+                    filterableCriteria,
+                    filterableCriteriaSortOptions,
+                    searchThreshold,
+                    searchKeys,
+                    sortItems,
+                    ...initialState
+                }
             }
-        }, middleware);
+        );
+
+        this.store.dispatch({
+            type: INIT
+        });
 
         // bind action creators to the store
         this.actions = Object.keys(actions).reduce((prev, actionKey) => {

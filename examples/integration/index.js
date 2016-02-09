@@ -1,6 +1,7 @@
 import { createStore, combineReducers } from 'redux';
-import { reducer as flterReducer, buildStore, filterActions, buildSelector } from 'redux-filter';
+import { reducer as flterReducer, filterActions, buildSelector } from 'redux-filter';
 import sweaters from './data.js';
+
 
 const config = {
     subjects: sweaters,
@@ -48,31 +49,25 @@ const config = {
     }
 };
 
-const store = buildStore(config);
-
-
-// create a selector with config options
-// including a resolver that points where the filter state lives withing the state tree
-const selector = buildSelector([], .6, [
+const store = createStore(
+    combineReducers({
+        filter: flterReducer
+    }),
     {
-        title: 'Price - Lowest to Highest',
-        fn: (items) => {
-            return [...items].sort((a, b) => a.price - b.price);
-        }
-    },
-    {
-        title: 'Price - Highest to Lowers',
-        fn: (items) => {
-            return [...items].sort((a, b) => b.price - a.price);
-        }
+        filter: config
     }
-]);
+);
 
-console.log(store.getState());
+// important to intialize
+store.dispatch(filterActions.init());
+
+
+// include resolver that points where the filter state lives withing the state tree
+const selector = buildSelector(state => state.filter);
 
 // call the actions from anything
 let unsubscribe = store.subscribe(() => {
-    console.log(store.getState());
+    console.log(selector(store.getState()));
 });
 
 store.dispatch(filterActions.goToPage(9));

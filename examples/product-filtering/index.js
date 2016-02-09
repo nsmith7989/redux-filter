@@ -225,7 +225,7 @@ class FilterWrap extends Component {
     }
 
     render() {
-        return <Filter {...config} subjects={config.subjects} >
+        return <Filter {...config} subjects={this.state.subjects} >
             <App />
         </Filter>;
     }

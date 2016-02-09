@@ -1,30 +1,26 @@
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers/root.js';
-import {buildOptionsList} from '../helpers/buildOptions';
+import { INIT } from '../constants';
 
-
-export function buildInitialState({filterableCriteria, filterableCriteriaSortOptions}) {
-
-    return function rebuild(subjects) {
-        const {filterFns, optionGroups} = buildOptionsList(subjects, filterableCriteria, filterableCriteriaSortOptions);
-        return {filterFns, optionGroups, subjectsCollection: subjects};
-    };
-}
-
-export default function buildStore(subjectsCollection, config, middleware, initialState) {
+export default function buildStore(initialState, middleware) {
 
     const middlewares = [
         thunk, ...middleware
     ];
+
     const finalStore = applyMiddleware(...middlewares)(createStore);
 
-    const {filterableCriteria, filterableCriteriaSortOptions} = config;
+    const store = finalStore(
+        combineReducers({
+            filter: rootReducer
+        }),
+        initialState
+    );
 
-    const updateSubjects = buildInitialState({filterableCriteria, filterableCriteriaSortOptions});
-
-    return finalStore(rootReducer(updateSubjects), {
-        ...initialState,
-        ...updateSubjects(subjectsCollection)
+    store.dispatch({
+        type: INIT
     });
+
+    return store;
 }

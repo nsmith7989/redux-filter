@@ -1,9 +1,9 @@
 import { createStore, combineReducers } from 'redux';
-import Filter, { reducer as flterReducer, buildStore, filterActions, buildSelector } from 'redux-filter';
+import { reducer as flterReducer, buildStore, filterActions, buildSelector } from 'redux-filter';
 import sweaters from './data.js';
 
 const config = {
-    subjectsCollection: sweaters,
+    subjects: sweaters,
     filterableCriteria: [
         {
             title: 'Sweater Type',
@@ -48,10 +48,7 @@ const config = {
     }
 };
 
-const store = buildStore(sweaters, {
-    filterableCriteria: config.filterableCriteria,
-    filterableCriteriaSortOptions: config.filterableCriteriaSortOptions
-}, [], {});
+const store = buildStore(config);
 
 
 // create a selector with config options

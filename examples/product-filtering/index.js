@@ -62,7 +62,7 @@ class Filters extends Component {
 
 class Product extends Component {
     render() {
-        const { color, type, price, size, designer, title } = this.props;
+        const { title } = this.props;
         const attributes = ['color', 'type', 'price', 'designer'];
         return <div className="product">
             <header>{title}</header>
@@ -92,18 +92,20 @@ class App extends Component {
 }
 
 const logger = store => next => action => {
+    /* eslint-disable no-console */
     console.group(action.type);
     console.info('dispatching', action);
     const result = next(action);
     console.log('next state', store.getState());
     console.groupEnd(action.type);
+    /* eslint-enable no-console */
     return result;
 };
 
 const filters = state => {
-    if (!Object.keys(state.appliedFilters).length) return '';
+    if (!Object.keys(state.filter.appliedFilters).length) return '';
     return qs.stringify({
-        appliedFilters: state.appliedFilters
+        appliedFilters: state.filter.appliedFilters
     });
 };
 
@@ -113,7 +115,7 @@ function hashURLFromState(state) {
 
 const getStateFromHash = () => {
     const filterString = window.location.hash.replace('#!/?', '');
-    return qs.parse(filterString)
+    return qs.parse(filterString);
 };
 
 const urlhash = store => next => action => {
@@ -202,7 +204,7 @@ class FilterWrap extends Component {
         const randomIndex = this.randomIndex();
         this.state = {
             subjects: config.subjects.slice(randomIndex, randomIndex + 5)
-        }
+        };
     }
 
     randomIndex() {
@@ -214,7 +216,7 @@ class FilterWrap extends Component {
         const index = this.randomIndex();
 
         this.setState({
-            subjects: config.subjects.slice(index, index + 5)
+            subjects: config.subjects.slice(index, index + 15)
         });
     }
 
@@ -223,9 +225,9 @@ class FilterWrap extends Component {
     }
 
     render() {
-        return <Filter {...config} subjects={this.state.subjects} >
+        return <Filter {...config} subjects={config.subjects} >
             <App />
-        </Filter>
+        </Filter>;
     }
 
 }

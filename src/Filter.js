@@ -1,6 +1,7 @@
 import { cloneElement, Component, Children } from 'react';
-import createStoreFromSubjects from './store/index.js';
+import buildStore from './store/index.js';
 import * as actions from './actions/creators.js';
+
 
 import buildSelector from './selectors/buildSelector';
 
@@ -23,10 +24,18 @@ class Filter extends Component {
             initialState = {}
             } = props;
 
-        // instantiate here
-        this.store = createStoreFromSubjects(subjects, {
-            filterableCriteria, filterableCriteriaSortOptions
-        }, middleware, initialState);
+
+        this.store = buildStore({
+            filter: {
+                subjects,
+                filterableCriteria,
+                filterableCriteriaSortOptions,
+                searchThreshold,
+                searchKeys,
+                sortItems,
+                ...initialState
+            }
+        }, middleware);
 
         // bind action creators to the store
         this.actions = Object.keys(actions).reduce((prev, actionKey) => {
@@ -35,7 +44,7 @@ class Filter extends Component {
         }, {});
 
         // build selector based on props
-        this.select = buildSelector(searchKeys, searchThreshold, sortItems);
+        this.select = buildSelector(state => state.filter);
 
         // if there is a sort function, apply it
         if (sortItems.length && (typeof sortItems[0].fn === 'function')) {

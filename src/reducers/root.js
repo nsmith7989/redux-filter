@@ -1,5 +1,7 @@
-import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE, UPDATE_SUBJECTS } from '../constants.js';
-import toggle, {toggleOnly, clearFilter} from '../helpers/toggle.js';
+import { TOGGLE_FILTER, KEYWORD_SEARCH, TOGGLE_FILTER_ONLY, CLEAR_FILTERS, APPLY_SORT, CLEAR_ALL_FILTERS, GO_TO_PAGE, UPDATE_SUBJECTS, INIT } from '../constants.js';
+import toggle, { toggleOnly, clearFilter } from '../helpers/toggle.js';
+import { combineReducers } from 'redux';
+import { buildOptionsList } from '../helpers/buildOptions';
 
 
 function appliedFilters(state = {}, action = null) {
@@ -52,40 +54,54 @@ function page(state = 1, action = {}) {
     }
 }
 
-function subjectsCollection(state = []) {
-    return state;
-}
-
-function filterFns(state = {}) {
-    return state;
-}
-
 function optionGroups(state = {}) {
     return state;
 }
 
-export default function buildReducer(updateSubjects) {
+function subjects(state = [], action = {}) {
+    switch (action.type) {
+        case UPDATE_SUBJECTS:
+            return action.subjects;
+        default:
+            return state;
+    }
+}
 
-    return function reducer(state = {}, action = {}) {
+function identity(state = {}) {
+    return state;
+}
 
-        const compiledState = {
-            appliedFilters: appliedFilters(state.appliedFilters, action),
-            keywordSearch: keywordSearch(state.keywordSearch, action),
-            sortFn: sortFn(state.sortFn, action),
-            page: page(state.page),
-            subjectsCollection: subjectsCollection(state.subjectsCollection, action),
-            filterFns: filterFns(state.filterFns, action),
-            optionGroups: optionGroups(state.optionGroups, action)
-        };
+const combinedReducers = combineReducers({
+    appliedFilters,
+    keywordSearch,
+    sortFn,
+    page,
+    optionGroups,
 
-        switch (action.type) {
-            case UPDATE_SUBJECTS:
-                return {
-                    ...compiledState,
-                    ...updateSubjects(action.subjects)
-                };
-            default:
-                return compiledState;
-        }
-    };
+    // previously global config options
+
+    subjects,
+    filterableCriteria: identity,
+    filterableCriteriaSortOptions: identity,
+    searchKeys: identity,
+    sortItems: identity,
+    searchThreshold: identity,
+    filterFns: identity
+});
+
+export default function reducer(state = {}, action = {}) {
+    const compiledState = combinedReducers(state, action);
+
+    if (action.type == UPDATE_SUBJECTS || action.type == INIT) {
+        const { filterFns, optionGroups } =
+            buildOptionsList(
+                compiledState.subjects,
+                compiledState.filterableCriteria,
+                compiledState.filterableCriteriaSortOptions
+            );
+
+        return {...compiledState, filterFns, optionGroups};
+    }
+    return compiledState;
+
 }

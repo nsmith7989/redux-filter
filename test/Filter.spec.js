@@ -26,7 +26,7 @@ expect.extend({
 });
 
 
-describe('Filter Component', () => {
+describe.only('Filter Component', () => {
     jsdom();
 
     class Child extends Component {

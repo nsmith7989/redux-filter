@@ -1,56 +1,66 @@
 import Fuse from 'fuse.js';
 import { createSelector } from 'reselect';
+import { buildOptionsList } from '../helpers/buildOptions';
 
-export default function(searchKeys, searchThreshold, sortItems, stateResolver = state => state) {
+const subjects = state => state.subjects;
+const filterableCriteria = state => state.filterableCriteria;
+const filterableCriteriaSortOptions = state => state.filterableCriteriaSortOptions;
 
-    function keywordFilter(items, searchText, keys) {
+const appliedFilters = state => state.appliedFilters;
+const keywordSearch = state => state.keywordSearch;
 
-        if (searchText === undefined || searchText === '') return items;
+const filterFns = state => state.filterFns;
 
-        var f = new Fuse(items, {
-            caseSensitive: false,
-            includeScore: false,
-            shouldSort: false,
-            threshold: searchThreshold,
-            keys: keys || searchKeys
-        });
+const searchKeys = state => state.searchKeys;
+const sortFn = state => state.sortFn;
+const searchThreshold = state => state.searchThreshold;
 
-        return f.search(searchText);
+function keywordFilter(items, searchText, keys, searchThreshold) {
 
-    }
+    if (searchText === undefined || searchText === '') return items;
+
+    var f = new Fuse(items, {
+        caseSensitive: false,
+        includeScore: false,
+        shouldSort: false,
+        threshold: searchThreshold,
+        keys: keys || searchKeys
+    });
+
+    return f.search(searchText);
+
+}
 
 
-    function filter(appliedFilters, collection, functions) {
+function filter(appliedFilters, collection, functions) {
 
-        return collection.filter(item => {
+    return collection.filter(item => {
 
-            if (!Object.keys(appliedFilters).length) return true;
+        if (!Object.keys(appliedFilters).length) return true;
 
-            return Object.keys(appliedFilters).every(key => {
-                return appliedFilters[key].some(value => {
-                    const fn = functions[key + '__' + value];
-                    return (typeof fn === 'function') ? fn(item) : false;
-                });
+        return Object.keys(appliedFilters).every(key => {
+            return appliedFilters[key].some(value => {
+                const fn = functions[key + '__' + value];
+                return (typeof fn === 'function') ? fn(item) : false;
             });
         });
+    });
 
-    }
-
-    const composedSelector = (appliedFilters, keyword, subjectsCollection, functions, sortFn) => {
-        const filteredResults = filter(appliedFilters, subjectsCollection, functions);
-        const keywordFiltered = keywordFilter(filteredResults, keyword);
-        return sortFn.fn(keywordFiltered);
-    };
-
-    const appliedFiltersSelector = state => stateResolver(state).appliedFilters;
-    const keywordSelector = state => stateResolver(state).keywordSearch;
-    const functions = state => stateResolver(state).filterFns;
-    const subjectsCollection = state => stateResolver(state).subjectsCollection;
-    const sortFn = state => stateResolver(state).sortFn;
-
-
-    return createSelector(
-        [appliedFiltersSelector, keywordSelector, subjectsCollection, functions, sortFn],
-        composedSelector
-    );
 }
+
+const multiPartFilter = (appliedFilters, keyword, subjectsCollection, functions, sortFn, searchThreshold) => {
+    const filteredResults = filter(appliedFilters, subjectsCollection, functions);
+    const keywordFiltered = keywordFilter(filteredResults, keyword, searchThreshold);
+    return sortFn.fn(keywordFiltered);
+};
+
+
+export const collection = createSelector(
+    [appliedFilters, keywordSearch, subjects, filterFns, sortFn, searchThreshold],
+    multiPartFilter
+);
+
+export const optionGroups = createSelector(
+    [subjects, filterableCriteria, filterableCriteriaSortOptions],
+    buildOptionsList
+);

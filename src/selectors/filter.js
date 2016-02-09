@@ -1,19 +1,5 @@
 import Fuse from 'fuse.js';
 import { createSelector } from 'reselect';
-import { buildOptionsList } from '../helpers/buildOptions';
-
-const subjects = state => state.subjects;
-const filterableCriteria = state => state.filterableCriteria;
-const filterableCriteriaSortOptions = state => state.filterableCriteriaSortOptions;
-
-const appliedFilters = state => state.appliedFilters;
-const keywordSearch = state => state.keywordSearch;
-
-const filterFns = state => state.filterFns;
-
-const searchKeys = state => state.searchKeys;
-const sortFn = state => state.sortFn;
-const searchThreshold = state => state.searchThreshold;
 
 function keywordFilter(items, searchText, keys, searchThreshold) {
 
@@ -26,7 +12,7 @@ function keywordFilter(items, searchText, keys, searchThreshold) {
         threshold: searchThreshold,
         keys: keys || searchKeys
     });
-
+    
     return f.search(searchText);
 
 }
@@ -48,19 +34,25 @@ function filter(appliedFilters, collection, functions) {
 
 }
 
-const multiPartFilter = (appliedFilters, keyword, subjectsCollection, functions, sortFn, searchThreshold) => {
+const multiPartFilter = (appliedFilters, keyword, subjectsCollection, functions, sortFn, searchKeys, searchThreshold) => {
     const filteredResults = filter(appliedFilters, subjectsCollection, functions);
-    const keywordFiltered = keywordFilter(filteredResults, keyword, searchThreshold);
+    const keywordFiltered = keywordFilter(filteredResults, keyword, searchKeys, searchThreshold);
     return sortFn.fn(keywordFiltered);
 };
 
+const subjects = state => state.subjects;
+
+const appliedFilters = state => state.appliedFilters;
+const keywordSearch = state => state.keywordSearch;
+
+const filterFns = state => state.filterFns;
+
+const searchKeys = state => state.searchKeys;
+const sortFn = state => state.sortFn;
+const searchThreshold = state => state.searchThreshold;
+
 
 export const collection = createSelector(
-    [appliedFilters, keywordSearch, subjects, filterFns, sortFn, searchThreshold],
+    [appliedFilters, keywordSearch, subjects, filterFns, sortFn, searchKeys, searchThreshold],
     multiPartFilter
-);
-
-export const optionGroups = createSelector(
-    [subjects, filterableCriteria, filterableCriteriaSortOptions],
-    buildOptionsList
 );

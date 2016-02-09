@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux';
-import { reducer as flterReducer, filterActions, buildSelector } from 'redux-filter';
+import { reducer as filterReducer, filterActions, buildSelector } from 'redux-filter';
 import sweaters from './data.js';
 
 
@@ -51,7 +51,7 @@ const config = {
 
 const store = createStore(
     combineReducers({
-        filter: flterReducer
+        filter: filterReducer
     }),
     {
         filter: config

@@ -2,14 +2,73 @@
 [![Build Status](https://travis-ci.org/nsmith7989/redux-filter.svg?branch=master)](https://travis-ci.org/nsmith7989/redux-filter)
 [![Coverage Status](https://coveralls.io/repos/nsmith7989/redux-filter/badge.svg?branch=master&service=github)](https://coveralls.io/github/nsmith7989/redux-filter?branch=master)
 
-> # 2.0 Recently Released
-> Includes interoperability with existing redux stores. Full documentation coming soon! 
-> Please see the [integration examples](https://github.com/nsmith7989/redux-filter/blob/master/examples/integration/index.js) for an idea.
-
 Higher Order React Component for filtering (and sorting) a collection of items. This is especially useful in product filters that
  mimic the sorting/filtering behavior of Amazon or Best Buy. See [the Sweater Example](https://github.com/nsmith7989/redux-filter/tree/master/examples/product-filtering).
 
-## Usage
+## Usage - With Existing Redux Store
+
+### Store and Reducer Setup
+
+        import {createStore, combineReducers} from 'redux';
+
+        import { reducer as filterReducer, filterActions } from 'redux-filter';
+
+        // 1. Pick a mount point where your filter state will live.
+        const reducers = {
+            // ... your other reducers here
+            filters: filterReducer
+        };
+
+        const reducer = combineReducers(reducers);
+
+        // 2. create your store, passing in some initial state at the same mount point
+        const store = createStore(
+            reducer,
+            filters: {
+
+              // things that are filtered
+              subjects: window.SUBJECTS,
+
+              // attributes that you filter.
+              // Component will return a unique list of attributes for each filterableCriteria
+              filterableCriteria: [
+                  {
+                      title: 'Filter By Practice Area',
+                      attribute: 'practices'
+                  },
+                  {
+                      title: 'Filter Alphabetically',
+                      attribute: 'initial'
+                  }
+              ],
+
+              // keys on each subject that will be searched on
+              searchKeys: ['title', 'subhead', 'practices'],
+
+              // if you need to order the filterableCriteria output
+              filterableCriteriaSortOptions: {
+                  tags: items => [...items].sort()
+              }
+            }
+        );
+
+        // 3. *IMPORTANT* Dispatch the init action
+        store.dispatch(filterActions.init());
+
+### Selector
+
+Build a selector for accessing your filter state. Pass in a function that resolves your filter state form the full state tree
+
+        import { buildSelector } from 'redux-filter';
+        const selector = buildSelector(state => state.filters);
+
+        // use when getting filter state
+        const filterState = selector(store.getState());
+
+ See [results](#results) for what is returned form the filter selector
+
+
+## Usage - Component
 
 Wrap filter App in `<Filter>`, passing in config options as props to `<Filter>`. The component will handle the filter
  state of your application and expose actions to change filters and keyword searches.
@@ -63,7 +122,7 @@ Wrap filter App in `<Filter>`, passing in config options as props to `<Filter>`.
 - `optionGroups` `{Array.<Object>}`. Unique values of the attributes from subjects taken from the `filterableCriteria` option.
 It also `count`s the number of subjects that meet the attribute.
 
-- `currentPage` `{Number}`. Current page after calling `goToPage`. NOTE: if a filter is applied `currentPage` will be set to 1. 
+- `currentPage` `{Number}`. Current page after calling `goToPage`. NOTE: if a filter is applied `currentPage` will be set to 1.
 
 Example:
 
@@ -103,6 +162,8 @@ Example:
 
 ### Actions
 
+- `init` `{function(void):void}`. Initialize the filter state. MUST be called after store creation if using with an existing redux store. 
+
 - `clearFilters` `{function(filterAttribute{string}):void}`. Clear all filters of a given type.
 
 - `keywordSearch` `{function(string):void}`. Search the collection by keyword.
@@ -115,7 +176,7 @@ Useful in select box or radio button scenarios.
 
 - `goToPage` `{function(pageNum):void}`. Set the currentPage to `pageNum`
 
-## `<Filter />` props
+## `<Filter />` props or InitialState passed to a redux store
 
 ### `subjects` `{Array<Object>}`
  Default: `[]`
@@ -128,7 +189,7 @@ Default: `[]`
 Attributes on subjects that you want to filter. Each object in this array will build up a unique list of properties based
 on `subjects` and inject as `optionGroups` into your component. See the example under `optionGroups` for example of output
 
-Each criteria can he marked as `hierarchical` which will trigger hierarchical `optionGroups`. See `examples/hiearchy-filter` 
+Each criteria can he marked as `hierarchical` which will trigger hierarchical `optionGroups`. See `examples/hiearchy-filter`
 
 ### `filterableCriteriaSortOptions` `{Object.<string, function>}`
 Default: `{}`

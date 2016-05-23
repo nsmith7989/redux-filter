@@ -38,7 +38,7 @@ function sortFn(state = { fn: (items) => items }, action = {}) {
     }
 }
 
-function page(state = 1, action = {}) {
+function page(state = 0, action = {}) {
 
     switch (action.type) {
         case GO_TO_PAGE:
@@ -48,7 +48,7 @@ function page(state = 1, action = {}) {
         case CLEAR_FILTERS:
         case CLEAR_ALL_FILTERS:
         case KEYWORD_SEARCH:
-            return 1; //
+            return 0; // reset to zero
         default:
             return state;
     }

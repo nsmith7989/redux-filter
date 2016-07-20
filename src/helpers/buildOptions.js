@@ -100,6 +100,11 @@ export function uniqueRanges(configValue, items, sortFn = null) {
             return within(min, max, currentValue);
         });
 
+        // if we did not find a range that matches, bail
+        if (!foundRange) {
+            return prev;
+        }
+
         const {min, max} = foundRange.range;
         // build range fn
         filterFns = {

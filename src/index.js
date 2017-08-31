@@ -9,3 +9,6 @@ export { reducer };
 
 import buildSelector from './selectors/buildSelector';
 export { buildSelector };
+
+import {buildOptionsList} from "./helpers/buildOptions";
+export { buildOptionsList };
